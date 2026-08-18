@@ -1007,27 +1007,13 @@ p {
   border-radius: var(--radius-md);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
   border: 1px solid rgba(0, 0, 0, 0.06);
+  filter: blur(3.5px);
   user-select: none;
   transform: scale(1.01);
 }
 
 .screen-zoom-hint {
-  position: absolute;
-  bottom: 24px;
-  right: 24px;
-  background: rgba(14, 13, 27, 0.88);
-  color: #ffffff;
-  padding: 6px 14px;
-  border-radius: 20px;
-  font-size: 0.72rem;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
-  pointer-events: none;
+  display: none;
 }
 
 .screen-details-panel {
