@@ -3,6 +3,25 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+  // 0. Hero load animation + Scroll reveals
+  const heroSection = document.querySelector('.hero-section');
+  if (heroSection) {
+    requestAnimationFrame(() => heroSection.setAttribute('data-loaded', 'true'));
+  }
+
+  const revealElements = document.querySelectorAll('.reveal');
+  if (revealElements.length) {
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    revealElements.forEach(el => revealObserver.observe(el));
+  }
+
   // 1. Gallery Tab Switching
   const tabButtons = document.querySelectorAll('.gallery-tab-btn');
   const tabPanes = document.querySelectorAll('.gallery-content-pane');
