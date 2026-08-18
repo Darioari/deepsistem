@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>DeePsistem | Gestão Inteligente para Profissionais da Saúde Mental</title>
+  <meta name="description" content="IA Clínica, Prontuário Longitudinal, Agenda, Financeiro, Videochamada Integrada por Sessão (BETA) e Atendimento Online em uma única rotina profissional.">
+  <meta name="keywords" content="psicologia, software para psicologos, prontuario eletronico, videochamada psicologia, telepsicologia, IA clinica, gestao de consultorio">
+  <meta name="author" content="DeePsistem">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/jpeg" href="assets/images/Favicon.jpg">
+  
+  <!-- Open Graph / Social Meta -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="DeePsistem | Gestão Inteligente para Saúde Mental">
+  <meta property="og:description" content="IA clínica, prontuário, agenda, financeiro e videochamada integrada por sessão (BETA).">
+  <meta property="og:image" content="assets/images/tela-01-dashboard.jpeg">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap" rel="stylesheet">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+  <!-- ==========================================================================
+       HEADER & NAVIGATION
+       ========================================================================== -->
+  <header class="site-header" id="navbar">
+    <a href="#inicio" class="brand" aria-label="DeePsistem Início">
+      <img src="assets/images/logo.png" alt="DeePsistem Logo" class="brand-img">
+    </a>
+
+    <nav>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="#video-beta">Videochamada <span class="beta-tag">BETA</span></a></li>
+        <li><a href="#telas">Telas & Recursos</a></li>
+        <li><a href="#como-funciona">Como Funciona</a></li>
+        <li><a href="#aura-ia">Aura Copilota</a></li>
+        <li><a href="#seguranca">Segurança & LGPD</a></li>
+        <li><a href="#faq">Dúvidas</a></li>
+        <li class="mobile-cta-item" style="margin-top:10px;padding-top:14px;border-top:1px solid var(--line-dark);">
+          <a href="#video-beta" class="btn btn-primary" style="width:100%;text-align:center;">Testar Video Beta</a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="nav-actions">
+      <a href="#telas" class="btn btn-ghost-dark btn-small">Ver Telas</a>
+      <a href="#video-beta" class="btn btn-primary btn-small">Testar Video Beta</a>
+      <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Abrir Menu">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="4" x2="20" y1="12" y2="12"></line>
+          <line x1="4" x2="20" y1="6" y2="6"></line>
+          <line x1="4" x2="20" y1="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <!-- ==========================================================================
+         HERO SECTION (ATO 1: O GANCHO NARRATIVO)
+         ========================================================================== -->
+    <section class="hero-section" id="inicio">
+      <div class="grid-lines"></div>
+      <div class="hero-glow-1"></div>
+
+      <div class="hero-container">
+        <div class="hero-content">
+          <span class="badge-pill badge-dark">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+            Gestão Inteligente para Profissionais da Saúde Mental
+          </span>
+
+          <h1>
+            Mais clareza para cuidar.
+            <span class="gradient-text">Mais tempo para estar presente.</span>
+          </h1>
+
+          <p class="lead">
+            IA Clínica • Prontuário Longitudinal • Agenda Semanal • Financeiro & PIX • Videochamada Integrada por Sessão • Construtor de Triagem • Site Profissional
+          </p>
+
+          <div class="hero-actions">
+            <a href="#video-beta" class="btn btn-primary">
+              Conhecer Videochamada Beta
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m9 18 6-6-6-6"/></svg>
+            </a>
+            <a href="#telas" class="btn btn-ghost-dark">
+              Explorar Telas do Sistema
+            </a>
+          </div>
+
+          <div class="hero-trust-bar">
+            <span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              Conforme LGPD & Resoluções CFP
+            </span>
+            <span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+              Decisão Clínica 100% Humana
+            </span>
+            <span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+              Dados Centralizados e Isolados
+            </span>
+          </div>
+        </div>
+
+        <!-- Visual Orbit System -->
+        <div class="hero-visual">
+          <div class="orbit-system">
+            <div class="orbit-ring ring-outer"></div>
+            <div class="orbit-ring ring-inner"></div>
+
+            <div class="aura-core-node">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"/>
+                <path d="M12 6a6 6 0 1 0 6 6 6 6 0 0 0-6-6zm0 10a4 4 0 1 1 4-4 4 4 0 0 1-4 4z"/>
+              </svg>
+              <strong>Aura IA</strong>
+              <small>Copilota Clínica</small>
+            </div>
+
+            <!-- Orbit Chips -->
+            <div class="orbit-chip chip-video">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
+              <span>Vídeo por Sessão (BETA)</span>
+            </div>
+
+            <div class="orbit-chip chip-agenda">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+              <span>Agenda Inteligente</span>
+            </div>
+
+            <div class="orbit-chip chip-prontuario">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+              <span>Prontuário Longitudinal</span>
+            </div>
+
+            <div class="orbit-chip chip-triagem">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+              <span>Formulário de Triagem</span>
+            </div>
+
+            <div class="orbit-chip chip-financeiro">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+              <span>PIX & Financeiro</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         DESTAQUE EXCLUSIVO: FUNCIONALIDADE BETA — CHAMADA DE VÍDEO POR SESSÃO
+         ========================================================================== -->
+    <section class="section-beta-video" id="video-beta">
+      <div class="beta-glow-bg"></div>
+
+      <div class="section-header-center">
+        <span class="badge-pill badge-beta">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
+          NOVA FUNCIONALIDADE BETA
+        </span>
+        <h2>Chamada de Vídeo Integrada <em>por Sessão Clínica</em></h2>
+        <p>
+          Elimine a troca constante entre Zoom, Google Meet e bloco de notas. Seu atendimento online agora acontece dentro da própria ficha do paciente, com sala segura, anotações simultâneas e copiloto de transcrição inteligente.
+        </p>
+      </div>
+
+      <div class="video-feature-stage">
+        <!-- Interactive Video Mockup Simulation -->
+        <div class="video-mockup-wrapper">
+          <div class="video-mockup-inner">
+            <div class="video-mockup-topbar">
+              <div class="dots">
+                <span></span><span></span><span></span>
+              </div>
+              <div class="room-title">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
+                Sala Privada e Confidencial · Atendimento de Jesse Pinkman (Sessão #08)
+              </div>
+              <div class="transcription-badge-live">
+                <span class="pulsing-dot"></span> Transcrição Ativa com Consentimento
+              </div>
+            </div>
+
+            <div class="video-mockup-grid">
+              <!-- Video Stage Area -->
+              <div class="video-call-area">
+                <div class="video-remote-avatar">
+                  <div class="video-avatar-circle">JP</div>
+                  <div class="video-caller-info">
+                    <strong>Jesse Pinkman (Paciente)</strong>
+                    <span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg> Conectado · Sala Privada Protegida</span>
+                  </div>
+                </div>
+
+                <!-- Picture in Picture (Professional Camera) -->
+                <div class="video-pip-local">
+                  <span style="display:flex;align-items:center;gap:4px;">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
+                    Sua Câmera
+                  </span>
+                </div>
+
+                <!-- Call Control Bar -->
+                <div class="video-call-controls">
+                  <button class="call-btn" id="demo-mic-btn" title="Alternar Microfone">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>
+                  </button>
+                  <button class="call-btn" id="demo-cam-btn" title="Alternar Câmera">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
+                  </button>
+                  <button class="call-btn" title="Compartilhar Tela">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                  </button>
+                  <button class="call-btn btn-hangup" title="Encerrar Sessão">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.68 13.31a16 16 0 0 0 3.41 2.6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7 2 2 0 0 1 1.72 2v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.42 19.42 0 0 1-6-6 19.8 19.8 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91"></path><line x1="23" y1="1" x2="1" y2="23"></line></svg>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Sidebar: Anotações Clínicas em Tempo Real -->
+              <div class="video-clinical-sidebar">
+                <div class="sidebar-box">
+                  <div class="sidebar-box-header">
+                    <span>LINK EXCLUSIVO DO PACIENTE</span>
+                  </div>
+                  <div class="link-copy-box">
+                    <input type="text" class="link-input" id="demo-link-input" value="https://deepsistem.com/atendimento/ses-9281-jp" readonly>
+                    <button class="btn btn-primary btn-small" id="demo-copy-link">
+                      <span id="demo-copy-toast">Copiar</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="sidebar-box" style="flex:1;">
+                  <div class="sidebar-box-header">
+                    <span>ANOTAÇÕES PRIVADAS DA SESSÃO</span>
+                    <span style="color:var(--color-emerald);font-size:0.7rem;">● Salvo</span>
+                  </div>
+                  <div class="notes-editor-mock">
+                    • Paciente relata melhora na ansiedade ao aplicar técnica de respiração acordada.<br>
+                    • Relato de conflito no ambiente de trabalho superado com assertividade.<br>
+                    • Meta para a próxima sessão: manter diário cognitivo.
+                  </div>
+                </div>
+
+                <div class="sidebar-box">
+                  <div class="sidebar-box-header">
+                    <span>AURA COPILOTA</span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+                  </div>
+                  <p style="font-size:0.75rem;color:rgba(255,255,255,0.7);line-height:1.4;">
+                    Estruturando tópicos principais para o registro de evolução clínica ao final da consulta.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4 Pillars of Video Beta -->
+        <div class="video-pillars-grid">
+          <div class="pillar-card">
+            <div class="pillar-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+            </div>
+            <h3>1-Clique por Sessão</h3>
+            <p>O paciente recebe um link único por WhatsApp ou e-mail e entra direto pelo navegador do celular ou PC. Zero necessidade de instalar apps ou criar logins.</p>
+          </div>
+
+          <div class="pillar-card">
+            <div class="pillar-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            </div>
+            <h3>Sigilo & Privacidade Total</h3>
+            <p>A transmissão de áudio e vídeo é direta e confidencial. O encontro permanece estritamente protegido entre você e seu paciente.</p>
+          </div>
+
+          <div class="pillar-card">
+            <div class="pillar-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+            </div>
+            <h3>Anotações em Tempo Real</h3>
+            <p>Escreva observações clínicas ao lado do vídeo sem perder o contato visual com o paciente nem ter de abrir outra janela.</p>
+          </div>
+
+          <div class="pillar-card">
+            <div class="pillar-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+            </div>
+            <h3>Evolução Imediata</h3>
+            <p>Ao finalizar o atendimento, os apontamentos da consulta são transformados em proposta de evolução de prontuário pronta para sua revisão.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         GALERIA INTERATIVA: TELAS REAIS DO DEEPSISTEM
+         ========================================================================== -->
+    <section class="section-gallery" id="telas">
+      <div class="section-header-center" style="color:var(--text-dark);">
+        <span class="badge-pill" style="background:#ebe7ff;color:#5b5ce2;border:1px solid #d4d0ff;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line></svg>
+          EXPERIÊNCIA REAL DO SISTEMA
+        </span>
+        <h2 style="color:var(--text-dark);">Conheça as Telas do DeePsistem em Ação</h2>
+        <p style="color:var(--text-dark-muted);">
+          Interface limpa, moderna e pensada exclusivamente para a prática clínica e gestão da saúde mental. Veja como cada módulo se conecta perfeitamente.
+        </p>
+      </div>
+
+      <!-- Gallery Interactive Nav Tabs -->
+      <div class="gallery-tabs-nav">
+        <button class="gallery-tab-btn active" data-tab="1">
+          <span>01. Painel Geral</span>
+        </button>
+        <button class="gallery-tab-btn" data-tab="2">
+          <span>02. Gestão do Paciente</span>
+        </button>
+        <button class="gallery-tab-btn" data-tab="3">
+          <span>03. Agenda Longitudinal</span>
+        </button>
+        <button class="gallery-tab-btn" data-tab="8">
+          <span>04. Gestão da Sessão & Vídeo</span>
+          <span class="badge-tab-beta">BETA</span>
+        </button>
+        <button class="gallery-tab-btn" data-tab="4">
+          <span>05. Formulário de Triagem</span>
+        </button>
+        <button class="gallery-tab-btn" data-tab="5">
+          <span>06. White-label & Marca</span>
+        </button>
+        <button class="gallery-tab-btn" data-tab="6">
+          <span>07. Atendimento & PIX</span>
+        </button>
+        <button class="gallery-tab-btn" data-tab="7">
+          <span>08. Site do Profissional</span>
+        </button>
+      </div>
+
+      <!-- Browser Showcase Frame -->
+      <div class="browser-showcase-container">
+        <div class="browser-window">
+          <div class="browser-header">
+            <div class="browser-dots">
+              <span></span><span></span><span></span>
+            </div>
+            <div class="browser-address">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+              https://app.deepsistem.com/dashboard
+            </div>
+            <div class="browser-actions-right">
+              <span>DeePsistem v2.4</span>
+            </div>
+          </div>
+
+          <!-- TAB 1: Painel Geral -->
+          <div class="gallery-content-pane active" id="tab-1">
+            <div class="screen-presentation-grid">
+              <div class="screen-image-wrapper">
+                <img src="assets/images/tela-01-dashboard.jpeg" alt="Painel Geral do DeePsistem" class="blurred-screen-img">
+                <div class="screen-zoom-hint"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg> Informações e Textos Desfocados</div>
+              </div>
+              <div class="screen-details-panel">
+                <div>
+                  <h3>Painel Geral & Visão da Clínica</h3>
+                  <p class="screen-desc">
+                    Uma visão panorâmica e acolhedora de toda a sua rotina logo ao iniciar o dia. Sem poluição visual, você tem controle total sobre compromissos, pacientes ativos e finanças.
+                  </p>
+                  <ul class="screen-highlights-list">
+                    <li>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+                      <strong>Consultório & Agenda:</strong> Acesso rápido aos atendimentos do dia e horários disponíveis.
+                    </li>
+                    <li>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+                      <strong>Pacientes & Prontuário:</strong> Resumos clínicos estruturados e estudos de caso em um clique.
+                    </li>
+                    <li>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+                      <strong>Métricas em Tempo Real:</strong> Total de pacientes, faturamento consolidado e previsão mensal.
+                    </li>
+                  </ul>
+                </div>
+                <a href="#video-beta" class="btn btn-primary btn-small">Experimentar DeePsistem</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 2: Gestão do Paciente -->
+          <div class="gallery-content-pane" id="tab-2">
+            <div class="screen-presentation-grid">
+              <div class="screen-image-wrapper">
+                <img src="assets/images/tela-02-paciente.jpeg" alt="Gestão do Paciente e Prontuário Longitudinal" class="blurred-screen-img">
+                <div class="screen-zoom-hint"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg> Informações e Textos Desfocados</div>
+              </div>
+              <div class="screen-details-panel">
+                <div>
+                  <h3>Gestão Longitudinal do Paciente</h3>
+                  <p class="screen-desc">
+                    Centralize toda a trajetória terapêutica. Desde a identificação inicial e anamnese até sessões, reabilitação neuropsicológica, documentos e financeiro.
+                  </p>
+                  <ul class="screen-highlights-list">
+                    <li>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+                      <strong>Abas Clínicas Dedicadas:</strong> Identificação, Sessões, Neuropsicologia, Reabilitação e Estudo de Caso.
+                    </li>
+                    <li>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+                      <strong>Resumo do Paciente em PDF:</strong> Geração de laudos e sínteses com layout profissional.
+                    </li>
+                    <li>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+                      <strong>Botão Direto de WhatsApp:</strong> Comunicação ética e rápida para confirmação de consultas.
+                    </li>
+                  </ul>
+                </div>
+                <a href="#video-beta" class="btn btn-primary btn-small">Ver Demonstração</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 3: Agenda Longitudinal -->
+          <div class="gallery-content-pane" id="tab-3">
+            <div class="screen-presentation-grid">
+              <div class="screen-image-wrapper">
+                <img src="assets/images/tela-03-agenda.jpeg" alt="Agenda Longitudinal em Semanas e Timeline" class="blurred-screen-img">
+                <div class="screen-zoom-hint"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg> Informações e Textos Desfocados</div>
+              </div>
+              <div class="screen-details-panel">
+                <div>
+                  <h3>Agenda Clínica Longitudinal</h3>
+                  <p class="screen-desc">
+                    Gerencie atendimentos, prazos de evolução e laudos de forma contínua em formato semanal e timeline organizada.
+                  </p>
+                  <ul class="screen-highlights-list">
+                    <li>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+                      <strong>Diferenciação por Modalidade:</strong> Sessão Presencial, Online por Vídeo, Avaliação e Supervisão.
+                    </li>
+                    <li>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+                      <strong>Alertas de Prazos:</strong> Lembretes automáticos para registro de evolução pendente.
+                    </li>
+                    <li>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+                      <strong>Sincronização com Paciente:</strong> Horários abertos para agendamento online automático.
+                    </li>
+                  </ul>
+                </div>
+                <a href="#video-beta" class="btn btn-primary btn-small">Organizar Minha Agenda</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 8: Gestão da Sessão & Vídeo (BETA) -->
+          <div class="gallery-content-pane" id="tab-8">
+            <div class="screen-presentation-grid">
+              <div class="screen-image-wrapper">
+                <img src="assets/images/tela-08-sessao-video.jpeg" alt="Gestão da Sessão com Videochamada e Evolução em Tempo Real" class="blurred-screen-img">
+                <div class="screen-zoom-hint"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg> Informações e Textos Desfocados</div>
+              </div>
+              <div class="screen-details-panel">
+                <div>
+                  <span class="badge-pill badge-beta" style="margin-bottom:12px;">DESTAQUE BETA</span>
+                  <h3>Gestão da Sessão & Videochamada</h3>
+                  <p class="screen-desc">
+                    O centro nevrálgico do seu atendimento. Botão dourado de <strong>Atendimento Online</strong>, anotações privadas divididas na tela e evolução imediata conectada à Aura.
+                  </p>
+                  <ul class="screen-highlights-list">
+                    <li>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+                      <strong>Atendimento Online Nativo:</strong> Inicie a teleconsulta sem links de terceiros.
+                    </li>
+                    <li>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+                      <strong>Anotações Privadas Simultâneas:</strong> Editor rico para apontamentos durante o encontro.
+                    </li>
+                    <li>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+                      <strong>Conversar com a Aura:</strong> Ajuda de IA para sintetizar ideias e hipóteses diagnósticas.
+                    </li>
+                  </ul>
+                </div>
+                <a href="#video-beta" class="btn btn-primary btn-small">Ver Recursos do Vídeo Beta</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 4: Formulário de Triagem -->
+          <div class="gallery-content-pane" id="tab-4">
+            <div class="screen-presentation-grid">
+              <div class="screen-image-wrapper">
+                <img src="assets/images/tela-04-triagem.jpeg" alt="Construtor de Formulário de Triagem e Contrato" class="blurred-screen-img">
+                <div class="screen-zoom-hint"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg> Informações e Textos Desfocados</div>
+              </div>
+              <div class="screen-details-panel">
+                <div>
+                  <h3>Construtor de Triagem & Contratos</h3>
+                  <p class="screen-desc">
+                    Crie seus próprios formulários de entrevista preliminar, anamnese e termos de atendimento com link público exclusivo para o paciente preencher antes do primeiro encontro.
+                  </p>
+                  <ul class="screen-highlights-list">
+                    <li>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+                      <strong>Perguntas Customizadas:</strong> Texto curto, longo, múltipla escolha e obrigatórias.
+                    </li>
+                    <li>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+                      <strong>Contrato Digital Integrado:</strong> Apresentação clara de termos e honorários.
+                    </li>
+                    <li>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+                      <strong>Preenchimento pelo Celular:</strong> Link responsivo direto para envio no WhatsApp.
+                    </li>
+                  </ul>
+                </div>
+                <a href="#video-beta" class="btn btn-primary btn-small">Personalizar Triagem</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 5: White-label & Marca -->
+          <div class="gallery-content-pane" id="tab-5">
+            <div class="screen-presentation-grid">
+              <div class="screen-image-wrapper">
+                <img src="assets/images/tela-05-whitelabel.jpeg" alt="Personalização de Identidade Profissional e Cores" class="blurred-screen-img">
+                <div class="screen-zoom-hint"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg> Informações e Textos Desfocados</div>
+              </div>
+              <div class="screen-details-panel">
+                <div>
+                  <h3>Identidade Profissional & Marca</h3>
+                  <p class="screen-desc">
+                    O sistema é seu. Aplique o logotipo da sua clínica, personalize a cor principal e secundária e entregue uma experiência visual impecável para seus pacientes.
+                  </p>
+                  <ul class="screen-highlights-list">
+                    <li>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+                      <strong>Upload de Logo:</strong> Sua marca no cabeçalho, relatórios e página pública.
+                    </li>
+                    <li>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+                      <strong>Paleta Customizada:</strong> Cores que respeitam sua identidade visual existente.
+                    </li>
+                    <li>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+                      <strong>Pré-visualização Instantânea:</strong> Veja como o paciente enxerga seu consultório.
+                    </li>
+                  </ul>
+                </div>
+                <a href="#video-beta" class="btn btn-primary btn-small">Criar Minha Marca</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 6: Atendimento & PIX -->
+          <div class="gallery-content-pane" id="tab-6">
+            <div class="screen-presentation-grid">
+              <div class="screen-image-wrapper">
+                <img src="assets/images/tela-06-pagamentos.jpeg" alt="Parâmetros de Atendimento e Gateways de Pagamento" class="blurred-screen-img">
+                <div class="screen-zoom-hint"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg> Informações e Textos Desfocados</div>
+              </div>
+              <div class="screen-details-panel">
+                <div>
+                  <h3>Parâmetros de Agenda & Pagamentos</h3>
+                  <p class="screen-desc">
+                    Defina dias e horários de atendimento, tempo de sessão, intervalos e receba pagamentos com segurança diretamente via chave PIX, Asaas ou Mercado Pago.
+                  </p>
+                  <ul class="screen-highlights-list">
+                    <li>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+                      <strong>Grade Horária Flexível:</strong> Defina dias ativos, horários e pausas de almoço.
+                    </li>
+                    <li>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+                      <strong>Pagamento na Entrevista:</strong> Cobrança opcional no momento do agendamento inicial.
+                    </li>
+                    <li>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+                      <strong>Múltiplos Meios:</strong> PIX Direto em sua chave ou Cartão de Crédito parcelado.
+                    </li>
+                  </ul>
+                </div>
+                <a href="#video-beta" class="btn btn-primary btn-small">Configurar Pagamentos</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 7: Site do Profissional -->
+          <div class="gallery-content-pane" id="tab-7">
+            <div class="screen-presentation-grid">
+              <div class="screen-image-wrapper">
+                <img src="assets/images/tela-07-site-profissional.jpeg" alt="Página Pública de Agendamento do Profissional" class="blurred-screen-img">
+                <div class="screen-zoom-hint"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg> Informações e Textos Desfocados</div>
+              </div>
+              <div class="screen-details-panel">
+                <div>
+                  <h3>Landing Page Pública do Consultório</h3>
+                  <p class="screen-desc">
+                    Ganhe uma página moderna e profissional pronta para receber pacientes. Com design elegante, depoimentos, apresentação acolhedora e botão de agendamento online.
+                  </p>
+                  <ul class="screen-highlights-list">
+                    <li>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+                      <strong>Design Editorial Premium:</strong> Transmita seriedade, acolhimento e autoridade.
+                    </li>
+                    <li>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+                      <strong>Agendamento em 3 Passos:</strong> Escolha do horário, dados e confirmação rápida.
+                    </li>
+                    <li>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+                      <strong>Endereço Personalizado:</strong> Seu link exclusivo pronto para a bio do Instagram.
+                    </li>
+                  </ul>
+                </div>
+                <a href="#video-beta" class="btn btn-primary btn-small">Ativar Meu Site</a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         JORNADA CLÍNICA LONGITUDINAL (COMO FUNCIONA)
+         ========================================================================== -->
+    <section class="section-flow" id="como-funciona">
+      <div class="section-header-center">
+        <span class="badge-pill badge-dark">FLUXO CLÍNICO COMPLETO</span>
+        <h2>Cada etapa continua ligada ao paciente.</h2>
+        <p>O DeePsistem aproxima todas as etapas do consultório para reduzir trocas de ferramentas e eliminar perda de contexto clínico.</p>
+      </div>
+
+      <div class="flow-grid">
+        <div class="flow-card">
+          <span class="flow-number">01</span>
+          <svg class="flow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          <h3>Antes da sessão</h3>
+          <p>Agenda aberta, triagem inicial e contexto clínico prévio organizados para você preparar o atendimento.</p>
+        </div>
+
+        <div class="flow-card">
+          <span class="flow-number">02</span>
+          <svg class="flow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
+          <h3>Durante o encontro</h3>
+          <p>Videochamada nativa por sessão, anotações simultâneas e suporte de áudio consentido com a Aura no mesmo fluxo.</p>
+        </div>
+
+        <div class="flow-card">
+          <span class="flow-number">03</span>
+          <svg class="flow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+          <h3>Depois da sessão</h3>
+          <p>Evoluções e formulações de caso estruturadas para sua leitura, revisão e validação profissional imediata.</p>
+        </div>
+
+        <div class="flow-card">
+          <span class="flow-number">04</span>
+          <svg class="flow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+          <h3>Entre atendimentos</h3>
+          <p>Metas terapêuticas, reabilitação neuropsicológica e acompanhamento longitudinal da evolução.</p>
+        </div>
+
+        <div class="flow-card">
+          <span class="flow-number">05</span>
+          <svg class="flow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+          <h3>Na gestão</h3>
+          <p>Cobrança de honorários, controle de PIX e relatórios administrativos sem burocracia desnecessária.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         AURA INTELIGÊNCIA CLÍNICA COM LIMITES CLAROS (ATO 4)
+         ========================================================================== -->
+    <section class="section-aura" id="aura-ia">
+      <div class="aura-container">
+        <div class="aura-visual-box">
+          <div class="aura-wave-ring"></div>
+          <div class="aura-wave-ring wave-2"></div>
+
+          <div class="aura-dialog-card">
+            <div class="aura-dialog-header">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+              <span>Aura · Copilota Clínica</span>
+            </div>
+            <p>
+              "Organizo o histórico longitudinal e elaboro uma síntese técnica revisável. Você interpreta, valida e toma a decisão clínica."
+            </p>
+            <div class="aura-audio-bars">
+              <span></span><span></span><span></span><span></span><span></span>
+              <small style="margin-left:auto;color:rgba(255,255,255,0.4);font-size:0.75rem;">escuta assistida</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="aura-copy-content">
+          <span class="badge-pill" style="background:#ebe7ff;color:#5b5ce2;border:1px solid #d4d0ff;">
+            INTELIGÊNCIA ÉTICA E RESPONSÁVEL
+          </span>
+          <h2>A Aura organiza.<br>Você conduz.</h2>
+          <p class="aura-text">
+            Áudio autorizado, notas e histórico apoiam a formulação clínica. Nada substitui sua presença, seu julgamento técnico ou seu vínculo com o paciente.
+          </p>
+
+          <ul class="aura-points">
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              Consentimento obrigatório e explícito antes de qualquer gravação.
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              Conteúdo de prontuário 100% editável e revisável pelo profissional.
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              A decisão diagnóstica e de conduta terapêutica permanece puramente humana.
+            </li>
+          </ul>
+
+          <a href="#video-beta" class="btn btn-primary">
+            Conhecer a Aura
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         SEGURANÇA & LGPD (ATO 4)
+         ========================================================================== -->
+    <section class="section-security" id="seguranca">
+      <div class="security-container">
+        <div>
+          <span class="badge-pill" style="background:#e6f4ea;color:#137333;border:1px solid #ceead6;">
+            PRIVACIDADE EM PRIMEIRO LUGAR
+          </span>
+          <h2 style="margin: 14px 0 18px;font-size:clamp(2.2rem, 3.8vw, 3.8rem);line-height:1.05;">
+            Dados clínicos exigem cuidado em cada camada.
+          </h2>
+          <p style="color:var(--text-dark-muted);font-size:1rem;line-height:1.7;">
+            O DeePsistem foi concebido sob princípios rigorosos de isolamento por profissional, confidencialidade no transporte de mídia e menor exposição dos registros clínicos.
+          </p>
+        </div>
+
+        <div class="security-cards-grid">
+          <div class="sec-card">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            <strong>Acesso Autenticado</strong>
+            <p>Controle de sessões com tokens criptografados e proteção contra acessos indevidos.</p>
+          </div>
+
+          <div class="sec-card">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            <strong>Privacidade no Atendimento</strong>
+            <p>As videochamadas ocorrem em ambiente protegido e confidencial, sem gravação ou armazenamento indevido de vídeo.</p>
+          </div>
+
+          <div class="sec-card">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+            <strong>Revisão Obrigatória</strong>
+            <p>Nenhuma anotação de IA se torna prontuário oficial sem sua confirmação explícita.</p>
+          </div>
+
+          <div class="sec-card">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path><line x1="4" y1="22" x2="4" y2="15"></line></svg>
+            <strong>Conformidade Ética</strong>
+            <p>Desenvolvido em alinhamento com as diretrizes do Conselho Federal de Psicologia.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         PERGUNTAS FREQUENTES (FAQ)
+         ========================================================================== -->
+    <section class="section-faq" id="faq">
+      <div class="section-header-center" style="color:var(--text-dark);">
+        <span class="badge-pill" style="background:#ebe7ff;color:#5b5ce2;border:1px solid #d4d0ff;">DÚVIDAS FREQUENTES</span>
+        <h2 style="color:var(--text-dark);">Perguntas Comuns</h2>
+      </div>
+
+      <div class="faq-container">
+        <div class="faq-item active">
+          <button class="faq-question">
+            <span>Como funciona a Videochamada Integrada (BETA)?</span>
+            <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </button>
+          <div class="faq-answer">
+            <p>Cada sessão agendada no DeePsistem possui um link individual e confidencial para o atendimento online. O paciente entra com apenas 1 clique direto pelo navegador (celular ou computador), sem precisar instalar aplicativos externos. Ao mesmo tempo, você anota a evolução clínica na mesma tela com suporte da Aura.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question">
+            <span>O paciente precisa criar conta ou baixar aplicativo?</span>
+            <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </button>
+          <div class="faq-answer">
+            <p>Não. O acesso para o paciente é 100% direto via navegador (Chrome, Safari, Edge, Firefox no celular ou computador). O paciente só precisa clicar no link enviado por WhatsApp ou e-mail.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question">
+            <span>Como funciona a personalização de marca (White-label)?</span>
+            <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </button>
+          <div class="faq-answer">
+            <p>Você pode fazer o upload do seu logotipo e escolher as cores principais e secundárias da sua clínica. Essas personalizações são refletidas no seu painel, na página pública de agendamento dos pacientes e nos resumos clínicos gerados em PDF.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question">
+            <span>O sistema atende aos requisitos da LGPD e do CFP?</span>
+            <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </button>
+          <div class="faq-answer">
+            <p>Sim. O DeePsistem foi estruturado com consentimento explícito para transcrição, criptografia de ponta a ponta na conexão de vídeo, isolamento de dados entre profissionais e obrigatoriedade de revisão humana de todas as evoluções clínicas geradas.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         CLÍMAX & CTA FINAL (ATO 5: INVERSÃO DE CONTRASTE DARK)
+         ========================================================================== -->
+    <section class="section-final-cta">
+      <div class="final-glow"></div>
+      
+      <div class="final-container">
+        <span class="badge-pill badge-beta" style="margin-bottom: 20px;">SEU CONSULTÓRIO CONECTADO</span>
+        <h2>Menos ruído na rotina.<br>Mais presença no cuidado.</h2>
+        <p>
+          Comece pela agenda, centralize a ficha do paciente e experimente a nova videochamada nativa por sessão com assistência clínica inteligente.
+        </p>
+
+        <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
+          <a href="#video-beta" class="btn btn-primary">
+            Experimentar Videochamada BETA
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+          </a>
+          <a href="#telas" class="btn btn-ghost-dark">
+            Rever Telas do Sistema
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ==========================================================================
+       FOOTER
+       ========================================================================== -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <a href="#inicio" class="brand" aria-label="DeePsistem Início">
+        <img src="assets/images/logo.png" alt="DeePsistem Logo" class="brand-img" style="height:36px;">
+      </a>
+
+      <p>© 2026 DeePsistem. Gestão inteligente para profissionais da saúde mental. Todos os direitos reservados.</p>
+
+      <div class="footer-links">
+        <a href="#video-beta">Video Beta</a>
+        <a href="#telas">Telas</a>
+        <a href="#seguranca">Segurança</a>
+        <a href="#inicio">Topo ↑</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Lightbox Modal for Screenshots -->
+  <div class="lightbox-modal" id="lightbox-modal">
+    <div class="lightbox-content">
+      <button class="lightbox-close" id="lightbox-close" aria-label="Fechar visualização">&times;</button>
+      <img src="" alt="Captura ampliada do DeePsistem" id="lightbox-img">
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="assets/script.js"></script>
+</body>
+</html>
