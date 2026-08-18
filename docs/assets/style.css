@@ -1007,10 +1007,7 @@ p {
   border-radius: var(--radius-md);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
   border: 1px solid rgba(0, 0, 0, 0.06);
-  filter: blur(3.5px);
-  -webkit-filter: blur(3.5px);
   user-select: none;
-  pointer-events: none;
   transform: scale(1.01);
 }
 
