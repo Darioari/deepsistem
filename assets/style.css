@@ -508,7 +508,7 @@ p {
 .chip-financeiro svg { color: var(--color-emerald); }
 
 /* ==========================================================================
-   BETA FEATURE HIGHLIGHT — CHAMADA DE VÍDEO POR SESSÃO
+   DESTAQUE — CHAMADA DE VÍDEO POR SESSÃO
    ========================================================================== */
 .section-beta-video {
   position: relative;
@@ -1799,3 +1799,25 @@ p {
     font-size: 0.9rem;
   }
 }
+/* PLANOS */
+.section-pricing { padding: 110px 24px; background: #f5f3ff; }
+.pricing-heading { color: var(--text-dark); }
+.pricing-heading p { color: var(--text-dark-muted); }
+.pricing-badge { color: #5b5ce2; background: #ebe7ff; border: 1px solid #d4d0ff; }
+.pricing-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; width: min(100%, 960px); margin: 54px auto 0; }
+.pricing-card { position: relative; display: flex; flex-direction: column; padding: 38px; background: #fff; border: 1px solid rgba(91, 92, 226, .16); border-radius: 24px; box-shadow: 0 24px 60px rgba(37, 33, 89, .08); }
+.pricing-card-featured { color: #fff; background: linear-gradient(145deg, #171638, #302875); border-color: rgba(169, 154, 255, .7); box-shadow: 0 28px 70px rgba(55, 43, 140, .24); }
+.pricing-highlight { position: absolute; top: 18px; right: 18px; padding: 7px 10px; color: #24204d; background: #b9adff; border-radius: 999px; font-size: .68rem; font-weight: 800; letter-spacing: .08em; }
+.pricing-plan-name { color: #5b5ce2; font-size: 1.1rem; font-weight: 800; }
+.pricing-card-featured .pricing-plan-name { color: #c9c0ff; }
+.pricing-price { display: flex; align-items: baseline; gap: 7px; margin: 18px 0; }
+.pricing-price small { font-size: 1.1rem; font-weight: 700; }
+.pricing-price strong { font-size: clamp(2.8rem, 5vw, 4.1rem); line-height: 1; letter-spacing: -.05em; }
+.pricing-price span, .pricing-card > p, .pricing-card li { color: var(--text-dark-muted); }
+.pricing-card-featured .pricing-price span, .pricing-card-featured > p, .pricing-card-featured li { color: rgba(255, 255, 255, .76); }
+.pricing-card ul { display: grid; gap: 13px; padding: 24px 0; margin: 0 0 18px; list-style: none; border-top: 1px solid rgba(91, 92, 226, .12); }
+.pricing-card li::before { content: '✓'; margin-right: 10px; color: #5b5ce2; font-weight: 900; }
+.pricing-card-featured li::before { color: #b9adff; }
+.pricing-button { width: 100%; margin-top: auto; text-align: center; }
+.pricing-trial-note { margin: 26px auto 0; color: var(--text-dark-muted); text-align: center; }
+@media (max-width: 760px) { .section-pricing { padding: 80px 18px; } .pricing-grid { grid-template-columns: 1fr; } .pricing-card { padding: 30px 24px; } }
