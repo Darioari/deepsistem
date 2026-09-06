@@ -1549,31 +1549,7 @@ import { AgendaView } from '@/components/agenda-view';
              </label>
  
              <button className="btn-theme-topbar" onClick={alternarTemaTopbar} title="Alternar tema">               {temaEscuro ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}             </button>             <button className="btn-theme-topbar" onClick={() => triggerToast('Você não tem novas notificações.')} title="Notificações"><Bell className="w-5 h-5" /></button>             <button className="btn-theme-topbar" onClick={() => setAbaAtiva('aba-configuracoes')} title="Configurações"><Settings className="w-5 h-5" /></button>             <div className="profile-menu-wrap">               <button className="topbar-avatar" onClick={() => setMenuPerfilAberto(!menuPerfilAberto)} aria-expanded={menuPerfilAberto}>                 {nomeProfissional ? nomeProfissional.split(' ').map((n: string) => n[0]).slice(0, 2).join('').toUpperCase() : 'PS'}               </button>               {menuPerfilAberto && (                 <div className="profile-popover">                   <strong>{nomeProfissional}</strong>                   <span>{emailProfissional || 'Sessão ativa'}</span>                   <button onClick={() => triggerToast('Abrindo troca de senha...')}><RefreshCw className="w-4 h-4" /> Trocar senha</button>                   <button onClick={handleLogout}><LogOut className="w-4 h-4" /> Sair</button>                 </div>               )}             </div>           </div>         </header>          <main className={`main-content ${abaAtiva === 'aba-gestao-paciente' || abaAtiva === 'aba-pacientes' ? 'patient-mode' : ''}`}>           {billingBlocked && <div className="billing-lock-banner" role="alert"><div><ShieldAlert /><span><strong>{billingMessage || 'Ative sua conta para continuar.'}</strong><small>Escolha um plano e conclua o pagamento pelo Mercado Pago. A liberação acontece automaticamente após a confirmação.</small></span></div><button type="button" onClick={() => router.push(billingCheckoutUrl)}>Ativar minha conta <ArrowRight /></button></div>}                       
-            {trialBannerElegivel && !billingBlocked && (
-              <div className="trial-top-banner" role="status" aria-label="Aviso de período de teste">
-                <div className="trial-top-banner-content">
-                  <div className="trial-top-banner-icon">
-                    <Clock className="w-5 h-5" />
-                  </div>
-                  <div className="trial-top-banner-text">
-                    <strong>Período de Teste Gratuito · Restam {trialDaysRemaining} {trialDaysRemaining === 1 ? 'dia' : 'dias'}</strong>
-                    <span>Você tem 7 dias grátis com acesso completo a todos os recursos do <strong>Plano Deep Pro</strong> liberados (IA clínica, videochamadas e financeiro).</span>
-                  </div>
-                </div>
-                <div className="trial-top-banner-actions">
-                  <button
-                    type="button"
-                    className="btn-trial-upgrade"
-                    onClick={() => router.push('/assinatura/checkout?plan=pro')}
-                  >
-                    <Sparkles className="w-4 h-4" />
-                    <span>Assinar Deep Pro</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            )}
-           {/* PAINEL GERAL SAAS */}
+            {/* PAINEL GERAL SAAS */}
            {abaAtiva === 'aba-painel' && (
              <section className="tab-panel active dashboard-overview reveal-element">
                <div className="dashboard-heading">                 <div><span className="eyebrow">Visão geral</span><h1>{obterSaudacao()}, {nomeProfissional}</h1><p>Acompanhe sua clínica em um único lugar.</p></div>                 <button onClick={() => { setEditandoCadastroPaciente(false); setModalNovoPacienteAtivo(true); }} className="btn-primary w-auto px-5 py-2.5 text-xs"><Plus className="w-4 h-4" /> Novo paciente</button>               </div>
