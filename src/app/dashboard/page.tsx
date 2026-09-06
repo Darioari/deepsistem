@@ -181,8 +181,18 @@ import { AgendaView } from '@/components/agenda-view';
    const [toastAtivo, setToastAtivo] = useState(false);
    const [toastMensagem, setToastMensagem] = useState('');
  
-   // Estados de Dados
-   const [pacientes, setPacientes] = useState<Paciente[]>([]);
+   // Estados de Dados (com hidratação resiliente a partir do cache local)
+   const [pacientes, setPacientes] = useState<Paciente[]>(() => {
+     if (typeof window === 'undefined') return [];
+     try {
+       const cached = localStorage.getItem('deepsistem_cached_patients');
+       if (cached) {
+         const parsed = JSON.parse(cached);
+         if (Array.isArray(parsed) && parsed.length > 0) return parsed as Paciente[];
+       }
+     } catch {}
+     return [];
+   });
    const [marca, setMarca] = useState({
      cor_primaria: DESIGN_TOKENS.color.primary,     cor_secundaria: DESIGN_TOKENS.color.secondary,     tema_padrao: 'light',
      logotipo_url: '', background_url: ''
@@ -501,8 +511,32 @@ import { AgendaView } from '@/components/agenda-view';
       localStorage.removeItem('psistem_user');
       router.push('/login');
     });
-  }, [router]);    // Carregar dados iniciais   useEffect(() => {     if (!planoCarregado) return;     carregarMarcaVisual();     if (isPro) carregarCredenciaisGateways();     carregarPacientes();     carregarFinanceiro();     carregarOperacao();   }, [planoCarregado, isPro]);    // Mantém estudo de caso e reabilitação sincronizados com a ficha selecionada.   useEffect(() => {     if (!pacienteSelecionado?.id) return;     carregarEstudoCaso(pacienteSelecionado.id);     carregarReabilitacao(pacienteSelecionado.id);     carregarCentralPaciente(pacienteSelecionado.id);   }, [pacienteSelecionado?.id]);   
-   // Redesenhar o gráfico de scores quando reabData ou aba ativa mudam
+  }, [router]);
+
+  // Carregar dados iniciais
+    useEffect(() => {
+      if (!planoCarregado) return;
+      carregarMarcaVisual();
+      if (isPro) carregarCredenciaisGateways();
+      carregarPacientes();
+      carregarFinanceiro();
+      carregarOperacao();
+    }, [planoCarregado, isPro]);
+
+    // Revalidar pacientes sempre que a aba de pacientes for acessada
+    useEffect(() => {
+      if (planoCarregado && (abaAtiva === 'aba-pacientes' || abaAtiva === 'aba-gestao-paciente')) {
+        carregarPacientes(true);
+      }
+    }, [abaAtiva, planoCarregado]);
+
+    // Mantém estudo de caso e reabilitação sincronizados com a ficha selecionada.
+    useEffect(() => {
+      if (!pacienteSelecionado?.id) return;
+      carregarEstudoCaso(pacienteSelecionado.id);
+      carregarReabilitacao(pacienteSelecionado.id);
+      carregarCentralPaciente(pacienteSelecionado.id);
+    }, [pacienteSelecionado?.id]);
    useEffect(() => {
      if (abaAtiva === 'aba-reabilitacao' && subAbaReab === 'dashboard' && reabData && sessoesClinicas.length > 0) {
        setTimeout(() => {
@@ -594,33 +628,92 @@ import { AgendaView } from '@/components/agenda-view';
      }
    }
  
-   async function carregarPacientes() {
-     try {
-       const res = await fetch('/api/pacientes', { cache: 'no-store' });
-       const data = await res.json().catch(() => null);
-       if (!res.ok) {
-         throw new Error(data?.error || `Falha ao carregar pacientes (${res.status}).`);
-       }
-       if (!Array.isArray(data)) {
-         throw new Error('A resposta de pacientes é inválida.');
-       }
+    function getAuthHeaders(extra?: HeadersInit): Record<string, string> {
+      const headers: Record<string, string> = {};
+      if (extra) {
+        if (extra instanceof Headers) {
+          extra.forEach((v, k) => { headers[k] = v; });
+        } else if (Array.isArray(extra)) {
+          extra.forEach(([k, v]) => { headers[k] = v; });
+        } else {
+          Object.assign(headers, extra);
+        }
+      }
+      try {
+        if (typeof window !== 'undefined') {
+          const token = localStorage.getItem('psistem_token');
+          if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+            headers['x-session-token'] = token;
+          }
+        }
+      } catch {}
+      return headers;
+    }
 
-       // Uma falha transitória não pode transformar uma lista persistida em
-       // uma tela vazia. Só aceitamos [] quando a própria fonte respondeu
-       // corretamente com uma lista válida; erros nunca alteram o estado atual.
-       setPacientes(data as Paciente[]);
-       setPacienteSelecionado(prev => {
-         if (data.length === 0) return null;
-         if (prev && data.some((p: Paciente) => p.id === prev.id)) {
-           return data.find((p: Paciente) => p.id === prev.id) || data[0];
-         }
-         return data[0];
-       });
-     } catch (e) {
-       console.error('Não foi possível carregar os pacientes:', e);
-       triggerToast('Não foi possível atualizar os pacientes. Os dados atuais foram preservados.');
-     }
-   }
+    async function apiFetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
+      const headers = getAuthHeaders(init?.headers);
+      return fetch(input, { credentials: 'same-origin', ...init, headers });
+    }
+
+    async function carregarPacientes(silencioso = false) {
+      try {
+        const res = await apiFetch('/api/pacientes', { cache: 'no-store' });
+        const data = await res.json().catch(() => null);
+        if (!res.ok) {
+          throw new Error(data?.error || `Falha ao carregar pacientes (${res.status}).`);
+        }
+        if (!Array.isArray(data)) {
+          throw new Error('A resposta de pacientes é inválida.');
+        }
+
+        // Se a API retornou pacientes válidos:
+        if (data.length > 0) {
+          setPacientes(data as Paciente[]);
+          try {
+            if (typeof window !== 'undefined') {
+              localStorage.setItem('deepsistem_cached_patients', JSON.stringify(data));
+            }
+          } catch {}
+          setPacienteSelecionado(prev => {
+            if (prev && data.some((p: Paciente) => p.id === prev.id)) {
+              return data.find((p: Paciente) => p.id === prev.id) || data[0];
+            }
+            return data[0];
+          });
+        } else {
+          // Se retornou vazio do backend, verificamos se já temos pacientes em memória ou cache para blindar contra esvaziamento acidental
+          setPacientes(prev => {
+            if (prev.length > 0) {
+              console.warn('[pacientes] Resposta vazia recebida do servidor; preservando lista existente em memória.');
+              return prev;
+            }
+            return [];
+          });
+        }
+        if (!silencioso && data.length > 0) {
+          triggerToast(`${data.length} paciente${data.length > 1 ? 's' : ''} sincronizado${data.length > 1 ? 's' : ''}.`);
+        }
+      } catch (e) {
+        console.error('Não foi possível carregar os pacientes:', e);
+        try {
+          if (typeof window !== 'undefined') {
+            const cached = localStorage.getItem('deepsistem_cached_patients');
+            if (cached) {
+              const parsed = JSON.parse(cached);
+              if (Array.isArray(parsed) && parsed.length > 0) {
+                setPacientes(parsed as Paciente[]);
+                setPacienteSelecionado(prev => prev || parsed[0]);
+                return;
+              }
+            }
+          }
+        } catch {}
+        if (!silencioso) {
+          triggerToast('Não foi possível atualizar os pacientes. Os dados locais foram preservados.');
+        }
+      }
+    }
  
    async function carregarEstudoCaso(pacId: string) {
      try {
@@ -806,91 +899,101 @@ import { AgendaView } from '@/components/agenda-view';
      }
    }
  
-   async function handleCriarNovoPaciente(e: React.FormEvent) {
-     e.preventDefault();
-     try {
-       const res = await fetch('/api/pacientes', {
-         method: 'POST',
-         headers: { 'Content-Type': 'application/json' },
-         body: JSON.stringify({ 
-           nome: novoPacNome, 
-           email: novoPacEmail || `${novoPacIniciais.toLowerCase()}@psistem.com`,
-           iniciais: novoPacIniciais,
-           data_nascimento: novoPacNascimento,
-           genero: novoPacGenero,
-           escolaridade: novoPacEscolaridade,
-           nome_social: novoPacNomeSocial,
-           cpf: novoPacCpf,
-           telefone: novoPacTelefone,
-           profissao: novoPacProfissao,
-           observacoes: novoPacObservacoes,
-           plano_saude: novoPacPlanoSaude,
-           tratamentos: novoPacTratamentos,
-           contato_emergencia: novoPacContatoEmergencia,
-           tipo_atendimento: novoPacTipoAtendimento,
-           raca_cor: novoPacRacaCor,
-           estado_civil: novoPacEstadoCivil,
-           contato_emergencia_2: novoPacEmergencia2,
-           endereco: novoPacEndereco,
-           medicamento: novoPacMedicamento,
-           cobranca: { tipo: novoPacCobranca, moeda: novoPacMoeda, valor: novoPacValor, meio_pagamento: novoPacPagamento },
-           status: 'ativo'
-         })
-       });
-       const data = await res.json().catch(() => null) as { paciente?: Paciente; error?: string } | null;
-       if (res.ok && data?.paciente) {
-         triggerToast('Paciente criado com sucesso!');
-         setModalNovoPacienteAtivo(false);
-         setPacientes(current => current.some(item => item.id === data.paciente?.id)
-           ? current.map(item => item.id === data.paciente?.id ? data.paciente as Paciente : item)
-           : [data.paciente as Paciente, ...current]);
-         setPacienteSelecionado(data.paciente);
-         await carregarPacientes();
-         
-         setNovoPacNome('');
-         setNovoPacIniciais('');
-         setNovoPacNascimento('');
-         setNovoPacGenero('Selecionar');
-         setNovoPacEscolaridade('Selecionar');
-         setNovoPacEmail('');
-         setNovoPacNomeSocial(''); setNovoPacCpf(''); setNovoPacTelefone(''); setNovoPacProfissao(''); setNovoPacObservacoes(''); setNovoPacPlanoSaude(''); setNovoPacTratamentos(''); setNovoPacContatoEmergencia(''); setNovoPacTipoAtendimento('Adulto');
-       } else if (!res.ok) {
-         triggerToast(data?.error || 'Não foi possível criar o paciente.');
-       }
-     } catch (e) {
-       alert('Erro ao criar paciente.');
-     }
-   }
- 
-   async function handleNovoOnboarding(e: React.FormEvent) {
-     e.preventDefault();
-     try {
-       const res = await fetch('/api/pacientes', {
-         method: 'POST',
-         headers: { 'Content-Type': 'application/json' },
-         body: JSON.stringify({ 
-           nome: novoPacNome, 
-           email: novoPacEmail || `${novoPacIniciais.toLowerCase()}@psistem.com`, 
-           iniciais: novoPacIniciais,
-           status: 'onboarding' 
-         })
-       });
-       const data = await res.json().catch(() => null) as { paciente?: Paciente; link?: string; error?: string } | null;
-       if (res.ok && data?.paciente) {
-         setLinkGerado(data.link || `http://localhost:3003/quiz?token=${data.paciente?.onboarding_token}`);
-         triggerToast('Link do Quiz gerado com sucesso!');
-         setPacientes(current => current.some(item => item.id === data.paciente?.id)
-           ? current.map(item => item.id === data.paciente?.id ? data.paciente as Paciente : item)
-           : [data.paciente as Paciente, ...current]);
-         setPacienteSelecionado(data.paciente);
-         await carregarPacientes();
-       } else if (!res.ok) {
-         triggerToast(data?.error || 'Não foi possível gerar o onboarding.');
-       }
-     } catch (e) {
-       alert('Erro ao gerar onboarding.');
-     }
-   }
+    async function handleCriarNovoPaciente(e: React.FormEvent) {
+      e.preventDefault();
+      try {
+        const res = await apiFetch('/api/pacientes', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            nome: novoPacNome, 
+            email: novoPacEmail || `${novoPacIniciais.toLowerCase()}@psistem.com`,
+            iniciais: novoPacIniciais,
+            data_nascimento: novoPacNascimento,
+            genero: novoPacGenero,
+            escolaridade: novoPacEscolaridade,
+            nome_social: novoPacNomeSocial,
+            cpf: novoPacCpf,
+            telefone: novoPacTelefone,
+            profissao: novoPacProfissao,
+            observacoes: novoPacObservacoes,
+            plano_saude: novoPacPlanoSaude,
+            tratamentos: novoPacTratamentos,
+            contato_emergencia: novoPacContatoEmergencia,
+            tipo_atendimento: novoPacTipoAtendimento,
+            raca_cor: novoPacRacaCor,
+            estado_civil: novoPacEstadoCivil,
+            contato_emergencia_2: novoPacEmergencia2,
+            endereco: novoPacEndereco,
+            medicamento: novoPacMedicamento,
+            cobranca: { tipo: novoPacCobranca, moeda: novoPacMoeda, valor: novoPacValor, meio_pagamento: novoPacPagamento },
+            status: 'ativo'
+          })
+        });
+        const data = await res.json().catch(() => null) as { paciente?: Paciente; error?: string } | null;
+        if (res.ok && data?.paciente) {
+          triggerToast('Paciente criado com sucesso!');
+          setModalNovoPacienteAtivo(false);
+          const pCriado = data.paciente;
+          setPacientes(current => {
+            const updated = current.some(item => item.id === pCriado.id)
+              ? current.map(item => item.id === pCriado.id ? pCriado : item)
+              : [pCriado, ...current];
+            try { localStorage.setItem('deepsistem_cached_patients', JSON.stringify(updated)); } catch {}
+            return updated;
+          });
+          setPacienteSelecionado(pCriado);
+          await carregarPacientes(true);
+          
+          setNovoPacNome('');
+          setNovoPacIniciais('');
+          setNovoPacNascimento('');
+          setNovoPacGenero('Selecionar');
+          setNovoPacEscolaridade('Selecionar');
+          setNovoPacEmail('');
+          setNovoPacNomeSocial(''); setNovoPacCpf(''); setNovoPacTelefone(''); setNovoPacProfissao(''); setNovoPacObservacoes(''); setNovoPacPlanoSaude(''); setNovoPacTratamentos(''); setNovoPacContatoEmergencia(''); setNovoPacTipoAtendimento('Adulto');
+        } else if (!res.ok) {
+          triggerToast(data?.error || 'Não foi possível criar o paciente.');
+        }
+      } catch (e) {
+        alert('Erro ao criar paciente.');
+      }
+    }
+
+    async function handleNovoOnboarding(e: React.FormEvent) {
+      e.preventDefault();
+      try {
+        const res = await apiFetch('/api/pacientes', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            nome: novoPacNome, 
+            email: novoPacEmail || `${novoPacIniciais.toLowerCase()}@psistem.com`, 
+            iniciais: novoPacIniciais, 
+            status: 'onboarding' 
+          })
+        });
+        const data = await res.json().catch(() => null) as { paciente?: Paciente; link?: string; error?: string } | null;
+        if (res.ok && data?.paciente) {
+          setLinkGerado(data.link || `http://localhost:3003/quiz?token=${data.paciente?.onboarding_token}`);
+          triggerToast('Link do Quiz gerado com sucesso!');
+          const pCriado = data.paciente;
+          setPacientes(current => {
+            const updated = current.some(item => item.id === pCriado.id)
+              ? current.map(item => item.id === pCriado.id ? pCriado : item)
+              : [pCriado, ...current];
+            try { localStorage.setItem('deepsistem_cached_patients', JSON.stringify(updated)); } catch {}
+            return updated;
+          });
+          setPacienteSelecionado(pCriado);
+          await carregarPacientes(true);
+        } else if (!res.ok) {
+          triggerToast(data?.error || 'Não foi possível gerar o onboarding.');
+        }
+      } catch (e) {
+        alert('Erro ao gerar onboarding.');
+      }
+    }
  
    async function handleSalvarEstudoCaso() {
      const pacId = pacienteSelecionado?.id;
@@ -1703,7 +1806,7 @@ import { AgendaView } from '@/components/agenda-view';
               </section>
             )}
 
-            {abaAtiva === 'aba-form' && <FormBuilder />}            {abaAtiva === 'aba-termos' && <TermsManagement patients={pacientes.map(patient => ({ id: patient.id, nome: patient.nome, email: patient.email }))} />}            {abaAtiva === 'aba-financeiro' && <ConsolidatedFinance />}            {/* ABA: PACIENTES & ONBOARDING */}           {abaAtiva === 'aba-pacientes' && (             <section className="tab-panel active reveal-element">               <div className="pacientes-section">                                  <div className="section-header">                   <div>                     <h2 className="text-xl font-bold tracking-tight">Pacientes — Gestão</h2>                     <p className="text-sm text-gray-500">Visão de consultório: acompanhe cada paciente, próximas consultas e status clínico.</p>                   </div>                   <button onClick={() => { setEditandoCadastroPaciente(false); setModalNovoPacienteAtivo(true); }} className="btn-primary w-auto px-5 py-2.5 text-xs flex items-center gap-1.5 shadow-sm bg-indigo-950">                     <Plus className="w-4 h-4" />                     Novo Paciente                   </button>                 </div>                  <div className="flex gap-4 items-center mt-4">                   <div className="relative flex-1 max-w-[320px]">                     <Search className="w-4 h-4 text-gray-400 absolute left-3 top-3" />                     <input                        type="text"                        className="form-control pl-9 text-xs py-2"                        placeholder="Buscar por nome ou iniciais..."                        value={buscaPacienteQuery}                       onChange={(e) => setBuscaPacienteQuery(e.target.value)}                     />                   </div>                   <select className="form-control text-xs py-2 w-auto" style={{ width: '120px' }}>                     <option value="Todos">Todos</option>                     <option value="Ativos">Ativos</option>                     <option value="Onboarding">Onboarding</option>                   </select>                 </div>                  <div className="pacientes-grid-cards mt-6">                   {pacientesFiltrados.map(p => (                     <div key={p.id} className="paciente-card-gestao card-glass">                       <div>                         <div className="paciente-card-header">                           <div className="paciente-card-info">                             <div className="paciente-card-iniciais">                               {p.iniciais || p.nome.substring(0, 2).toUpperCase()}                             </div>                             <div>                               <h4 className="paciente-card-nome">{p.nome}</h4>                               <span className="paciente-card-sub">{p.escolaridade || 'F90 - F21'}</span>                             </div>                           </div>                           <span className={`badge ${p.status === 'ativo' ? 'badge-ativo' : 'badge-onboarding'} text-[9px] px-2 py-0.5 rounded-full font-bold`}>                             {p.status}                           </span>                         </div>                          <div className="paciente-card-divider" />                          <div className="paciente-card-boxes">                           <div className="paciente-card-box">                             <span className="title">Última Consulta</span>                             <span className="val">23/07/2026</span>                           </div>                           <div className="paciente-card-box">                             <span className="title">Próxima</span>                             <span className="val text-gray-400 font-bold">A agendar</span>                           </div>                         </div>                       </div>                        <div className="flex justify-between items-center mt-2 pt-2 border-t border-gray-50 dark:border-gray-900">                         <button                            onClick={() => {                             setPacienteSelecionado(p);                             setAbaAtiva('aba-gestao-paciente');                           }}                            className="paciente-card-link text-xs flex items-center gap-1.5"                         >                           <Eye className="w-3.5 h-3.5 text-gray-400" />                           Prontuário clínico                         </button>                                                  {p.status === 'onboarding' && (                           <button onClick={() => copiarLinkQuiz(p.onboarding_token)} className="btn-action text-[10px] py-1 px-2.5">                             Copiar Link                           </button>                         )}                       </div>                     </div>                   ))}                   {pacientesFiltrados.length === 0 && (                     <div className="col-span-full text-center py-10 bg-white dark:bg-gray-900/10 border border-gray-100 dark:border-gray-800 rounded-md">                       <p className="text-xs text-gray-400">Nenhum paciente encontrado com esta busca.</p>                     </div>                   )}                 </div>                </div>             </section>           )}            {/* ABA: GESTÃO DO PACIENTE */}           {abaAtiva === 'aba-gestao-paciente' && (             <section className="gestao-paciente-container active reveal-element">                              <aside className="patient-roster">                 <div className="patient-roster-actions">                   <button onClick={() => { setEditandoCadastroPaciente(false); setModalNovoPacienteAtivo(true); }} className="btn-primary"><Plus className="w-4 h-4" /> Nova pessoa</button>                 </div>                 <label className="patient-roster-search"><Search className="w-4 h-4" /><input value={buscaPacienteQuery} onChange={e => setBuscaPacienteQuery(e.target.value)} placeholder="Buscar por nome ou CPF..." /></label>                 <div className="patient-roster-meta"><span>{pacientesFiltrados.length} resultados</span><strong>Total: {pacientes.length}</strong></div>                 <div className="patient-roster-list">                   {pacientesFiltrados.map(paciente => (                     <button key={paciente.id} className={`patient-roster-item ${pacienteSelecionado?.id === paciente.id ? 'active' : ''}`} onClick={() => { setPacienteSelecionado(paciente); setSubAbaGestao('resumo'); }}>                       <span className="patient-roster-avatar">{paciente.iniciais || paciente.nome.split(' ').map(n => n[0]).join('').slice(0, 2)}</span>                       <span className="patient-roster-copy"><strong>{paciente.nome}</strong></span>                       <ChevronRight className="w-4 h-4" />                     </button>                   ))}                 </div>               </aside>                {/* Área Principal de Prontuário Clínico (Direita) */}               <div className="flex flex-col gap-6">                  <header className="patient-central-header">                   <div className="patient-central-identity">                     <span className="patient-central-avatar">{pacienteSelecionado?.iniciais || pacienteSelecionado?.nome.split(' ').map(n => n[0]).join('').slice(0, 2) || 'PS'}</span>                     <div><h2>{pacienteSelecionado?.nome || 'Selecione um paciente'}</h2></div>                   </div>                   <div className="patient-central-actions">{pacienteSelecionado && <PatientPdfSummaryButton patient={pacienteSelecionado} />}<button className="btn-action"><MessageSquare className="w-4 h-4" /> WhatsApp</button><button onClick={() => { setEditandoCadastroPaciente(true); setModalNovoPacienteAtivo(true); }} className="btn-primary w-auto px-4 py-2 text-xs"><Pencil className="w-4 h-4" /> Editar</button></div>                 </header>                  <div className={`patient-tabs-shell ${!patientTabsPrevious && !patientTabsNext ? 'no-arrows' : !patientTabsPrevious ? 'only-next' : !patientTabsNext ? 'only-previous' : ''}`}>                   {patientTabsPrevious && <button className="patient-tabs-arrow previous" onClick={() => patientTabsRef.current?.scrollBy({ left: -320, behavior: 'smooth' })} aria-label="Mostrar abas anteriores"><ChevronLeft /></button>}                   <nav ref={patientTabsRef} className="patient-central-tabs" aria-label="Central do paciente">                     {[                       ['resumo', 'Identificação', BookOpen], ['neuroavaliacao', 'Avaliação PSI', Brain], ['evolucao', 'Sessões', TrendingUp], ['estudo-caso-formula', 'Estudo de caso', Sliders], ['reabilitacao', 'Reabilitação', Activity], ['medicacoes', 'Resumo Clínico', Pill], ['documentos', 'Documentos', FolderPlus], ['termos-paciente', 'Termo', ShieldCheck], ['converse-aura', 'Aura', MessageSquare], ['financeiro', 'Financeiro', DollarSign]                     ].map(([id, label, Icon]) => <button key={id as string} className={subAbaGestao === id ? 'active' : ''} onClick={() => setSubAbaGestao(id as string)}><Icon className="w-4 h-4" />{label as string}</button>)}                   </nav>                   {patientTabsNext && <button className="patient-tabs-arrow next" onClick={() => patientTabsRef.current?.scrollBy({ left: 320, behavior: 'smooth' })} aria-label="Mostrar próximas abas"><ChevronRight /></button>}                 </div>                  {subAbaGestao === 'termos-paciente' && pacienteSelecionado && <div className="patient-tab-content patient-terms-tab"><TermsManagement patients={[{ id: pacienteSelecionado.id, nome: pacienteSelecionado.nome, email: pacienteSelecionado.email }]} patientId={pacienteSelecionado.id} embedded /></div>}                  {/* PERFIL DO PACIENTE */}                 {subAbaGestao === 'resumo' && (
+            {abaAtiva === 'aba-form' && <FormBuilder />}            {abaAtiva === 'aba-termos' && <TermsManagement patients={pacientes.map(patient => ({ id: patient.id, nome: patient.nome, email: patient.email }))} />}            {abaAtiva === 'aba-financeiro' && <ConsolidatedFinance />}            {/* ABA: PACIENTES & ONBOARDING */}           {abaAtiva === 'aba-pacientes' && (             <section className="tab-panel active reveal-element">               <div className="pacientes-section">                                  <div className="section-header">                   <div>                     <h2 className="text-xl font-bold tracking-tight">Pacientes — Gestão</h2>                     <p className="text-sm text-gray-500">Visão de consultório: acompanhe cada paciente, próximas consultas e status clínico.</p>                   </div>                   <div className="flex items-center gap-2">                     <button onClick={() => carregarPacientes()} className="btn-action px-3 py-2 text-xs flex items-center gap-1.5" title="Sincronizar lista de pacientes">                       <RefreshCw className="w-3.5 h-3.5" />                       Sincronizar                     </button>                     <button onClick={() => { setEditandoCadastroPaciente(false); setModalNovoPacienteAtivo(true); }} className="btn-primary w-auto px-5 py-2.5 text-xs flex items-center gap-1.5 shadow-sm bg-indigo-950">                       <Plus className="w-4 h-4" />                       Novo Paciente                     </button>                   </div>                 </div>                  <div className="flex gap-4 items-center mt-4">                   <div className="relative flex-1 max-w-[320px]">                     <Search className="w-4 h-4 text-gray-400 absolute left-3 top-3" />                     <input                        type="text"                        className="form-control pl-9 text-xs py-2"                        placeholder="Buscar por nome ou iniciais..."                        value={buscaPacienteQuery}                       onChange={(e) => setBuscaPacienteQuery(e.target.value)}                     />                   </div>                   <select className="form-control text-xs py-2 w-auto" style={{ width: '120px' }}>                     <option value="Todos">Todos</option>                     <option value="Ativos">Ativos</option>                     <option value="Onboarding">Onboarding</option>                   </select>                 </div>                  <div className="pacientes-grid-cards mt-6">                   {pacientesFiltrados.map(p => (                     <div key={p.id} className="paciente-card-gestao card-glass">                       <div>                         <div className="paciente-card-header">                           <div className="paciente-card-info">                             <div className="paciente-card-iniciais">                               {p.iniciais || p.nome.substring(0, 2).toUpperCase()}                             </div>                             <div>                               <h4 className="paciente-card-nome">{p.nome}</h4>                               <span className="paciente-card-sub">{p.escolaridade || 'F90 - F21'}</span>                             </div>                           </div>                           <span className={`badge ${p.status === 'ativo' ? 'badge-ativo' : 'badge-onboarding'} text-[9px] px-2 py-0.5 rounded-full font-bold`}>                             {p.status}                           </span>                         </div>                          <div className="paciente-card-divider" />                          <div className="paciente-card-boxes">                           <div className="paciente-card-box">                             <span className="title">Última Consulta</span>                             <span className="val">23/07/2026</span>                           </div>                           <div className="paciente-card-box">                             <span className="title">Próxima</span>                             <span className="val text-gray-400 font-bold">A agendar</span>                           </div>                         </div>                       </div>                        <div className="flex justify-between items-center mt-2 pt-2 border-t border-gray-50 dark:border-gray-900">                         <button                            onClick={() => {                             setPacienteSelecionado(p);                             setAbaAtiva('aba-gestao-paciente');                           }}                            className="paciente-card-link text-xs flex items-center gap-1.5"                         >                           <Eye className="w-3.5 h-3.5 text-gray-400" />                           Prontuário clínico                         </button>                                                  {p.status === 'onboarding' && (                           <button onClick={() => copiarLinkQuiz(p.onboarding_token)} className="btn-action text-[10px] py-1 px-2.5">                             Copiar Link                           </button>                         )}                       </div>                     </div>                   ))}                   {pacientesFiltrados.length === 0 && (                     <div className="col-span-full text-center py-10 bg-white dark:bg-gray-900/10 border border-gray-100 dark:border-gray-800 rounded-md">                       <p className="text-xs text-gray-400">Nenhum paciente encontrado com esta busca.</p>                     </div>                   )}                 </div>                </div>             </section>           )}            {/* ABA: GESTÃO DO PACIENTE */}           {abaAtiva === 'aba-gestao-paciente' && (             <section className="gestao-paciente-container active reveal-element">                              <aside className="patient-roster">                 <div className="patient-roster-actions flex items-center gap-2">                   <button onClick={() => { setEditandoCadastroPaciente(false); setModalNovoPacienteAtivo(true); }} className="btn-primary flex-1"><Plus className="w-4 h-4" /> Nova pessoa</button>                   <button onClick={() => carregarPacientes()} className="btn-action px-2.5 py-2" title="Sincronizar pacientes"><RefreshCw className="w-3.5 h-3.5" /></button>                 </div>                 <label className="patient-roster-search"><Search className="w-4 h-4" /><input value={buscaPacienteQuery} onChange={e => setBuscaPacienteQuery(e.target.value)} placeholder="Buscar por nome ou CPF..." /></label>                 <div className="patient-roster-meta"><span>{pacientesFiltrados.length} resultados</span><strong>Total: {pacientes.length}</strong></div>                 <div className="patient-roster-list">                   {pacientesFiltrados.map(paciente => (                     <button key={paciente.id} className={`patient-roster-item ${pacienteSelecionado?.id === paciente.id ? 'active' : ''}`} onClick={() => { setPacienteSelecionado(paciente); setSubAbaGestao('resumo'); }}>                       <span className="patient-roster-avatar">{paciente.iniciais || paciente.nome.split(' ').map(n => n[0]).join('').slice(0, 2)}</span>                       <span className="patient-roster-copy"><strong>{paciente.nome}</strong></span>                       <ChevronRight className="w-4 h-4" />                     </button>                   ))}                 </div>               </aside>                {/* Área Principal de Prontuário Clínico (Direita) */}               <div className="flex flex-col gap-6">                  <header className="patient-central-header">                   <div className="patient-central-identity">                     <span className="patient-central-avatar">{pacienteSelecionado?.iniciais || pacienteSelecionado?.nome.split(' ').map(n => n[0]).join('').slice(0, 2) || 'PS'}</span>                     <div><h2>{pacienteSelecionado?.nome || 'Selecione um paciente'}</h2></div>                   </div>                   <div className="patient-central-actions">{pacienteSelecionado && <PatientPdfSummaryButton patient={pacienteSelecionado} />}<button className="btn-action"><MessageSquare className="w-4 h-4" /> WhatsApp</button><button onClick={() => { setEditandoCadastroPaciente(true); setModalNovoPacienteAtivo(true); }} className="btn-primary w-auto px-4 py-2 text-xs"><Pencil className="w-4 h-4" /> Editar</button></div>                 </header>                  <div className={`patient-tabs-shell ${!patientTabsPrevious && !patientTabsNext ? 'no-arrows' : !patientTabsPrevious ? 'only-next' : !patientTabsNext ? 'only-previous' : ''}`}>                   {patientTabsPrevious && <button className="patient-tabs-arrow previous" onClick={() => patientTabsRef.current?.scrollBy({ left: -320, behavior: 'smooth' })} aria-label="Mostrar abas anteriores"><ChevronLeft /></button>}                   <nav ref={patientTabsRef} className="patient-central-tabs" aria-label="Central do paciente">                     {[                       ['resumo', 'Identificação', BookOpen], ['neuroavaliacao', 'Avaliação PSI', Brain], ['evolucao', 'Sessões', TrendingUp], ['estudo-caso-formula', 'Estudo de caso', Sliders], ['reabilitacao', 'Reabilitação', Activity], ['medicacoes', 'Resumo Clínico', Pill], ['documentos', 'Documentos', FolderPlus], ['termos-paciente', 'Termo', ShieldCheck], ['converse-aura', 'Aura', MessageSquare], ['financeiro', 'Financeiro', DollarSign]                     ].map(([id, label, Icon]) => <button key={id as string} className={subAbaGestao === id ? 'active' : ''} onClick={() => setSubAbaGestao(id as string)}><Icon className="w-4 h-4" />{label as string}</button>)}                   </nav>                   {patientTabsNext && <button className="patient-tabs-arrow next" onClick={() => patientTabsRef.current?.scrollBy({ left: 320, behavior: 'smooth' })} aria-label="Mostrar próximas abas"><ChevronRight /></button>}                 </div>                  {subAbaGestao === 'termos-paciente' && pacienteSelecionado && <div className="patient-tab-content patient-terms-tab"><TermsManagement patients={[{ id: pacienteSelecionado.id, nome: pacienteSelecionado.nome, email: pacienteSelecionado.email }]} patientId={pacienteSelecionado.id} embedded /></div>}                  {/* PERFIL DO PACIENTE */}                 {subAbaGestao === 'resumo' && (
                   !pacienteSelecionado ? (
                     <div className="tail-card text-center py-20 flex flex-col items-center justify-center gap-3">
                       <div className="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center mb-1">

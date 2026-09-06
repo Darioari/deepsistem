@@ -83,7 +83,7 @@ async function sessionFromPostgres(token) {
 
 async function roomFromStoredSession(token) {
   const session = await sessionFromPostgres(token) || readSessions().find(item => item.roomToken === token);
-  const tenant_id = session?.tenant_id || 'priscila-xavier';
+  const tenant_id = session?.tenant_id || 'pripsico';
   const room = {
     token,
     tenant_id,
