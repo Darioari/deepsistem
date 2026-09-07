@@ -1844,13 +1844,10 @@ const centralPacienteVazio = (): CentralPacienteData => ({
                     <button type="button" className={filtroPacienteStatus === "inativos" ? "active" : ""} onClick={() => setFiltroPacienteStatus("inativos")}>
                       Inativos <span className="badge-count">{pacientes.filter(p => p.status === "inativo").length}</span>
                     </button>
-                    <button type="button" className={filtroPacienteStatus === "todos" ? "active" : ""} onClick={() => setFiltroPacienteStatus("todos")}>
-                      Todos <span className="badge-count">{pacientes.length}</span>
-                    </button>
                   </div>
                 </div>
                 <label className="patient-roster-search"><Search className="w-4 h-4" /><input value={buscaPacienteQuery} onChange={e => setBuscaPacienteQuery(e.target.value)} placeholder="Buscar por nome ou CPF..." /></label>
-                <div className="patient-roster-meta"><span>{pacientesFiltrados.length} resultados</span><strong>Total: {pacientes.length}</strong></div>
+                <div className="patient-roster-meta"><span>{pacientesFiltrados.length} resultados</span><strong>Ativos: {pacientes.filter(p => p.status !== "inativo").length}</strong></div>
                 <div className="patient-roster-list">
                   {pacientesFiltrados.map(paciente => (
                     <button key={paciente.id} className={`patient-roster-item ${pacienteSelecionado?.id === paciente.id ? "active" : ""} ${paciente.status === "inativo" ? "opacity-60" : ""}`} onClick={() => { setPacienteSelecionado(paciente); setSubAbaGestao("resumo"); }}>
