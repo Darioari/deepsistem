@@ -622,11 +622,25 @@ body.dark-theme .topbar-avatar {
 }
 
 .profile-menu-wrap { position: relative; }
-.profile-popover { position: absolute; right: 0; top: 48px; width: 260px; padding: 16px; border: 1px solid #e2e8f0; border-radius: 14px; background: #ffffff; box-shadow: 0 16px 36px rgba(0, 0, 0, 0.08); display: flex; flex-direction: column; }
+.profile-popover { position: absolute; right: 0; top: 48px; width: 260px; padding: 16px; border: 1px solid #e2e8f0; border-radius: 14px; background: #ffffff; box-shadow: 0 16px 36px rgba(0, 0, 0, 0.08); display: flex; flex-direction: column; z-index: 1000; }
 body.dark-theme .profile-popover { background: #1e293b; border-color: rgba(255, 255, 255, 0.1); }
-.profile-popover > span { color: #64748b; font-size: .76rem; margin-top: 2px; }
-.profile-popover button { display: flex; align-items: center; gap: 10px; padding: 11px 2px; border: 0; border-top: 1px solid #f1f5f9; background: transparent; color: #1e293b; cursor: pointer; text-align: left; font-size: 0.82rem; }
+.profile-popover > span { color: #64748b; font-size: .76rem; margin-top: 2px; margin-bottom: 6px; }
+.profile-popover button { display: flex; align-items: center; gap: 10px; padding: 11px 2px; border: 0; border-top: 1px solid #f1f5f9; background: transparent; color: #1e293b; cursor: pointer; text-align: left; font-size: 0.82rem; transition: background-color 0.15s ease; border-radius: 6px; }
+.profile-popover button:hover { background: #f8fafc; padding-left: 6px; }
 body.dark-theme .profile-popover button { border-top-color: rgba(255, 255, 255, 0.06); color: #f8fafc; }
+body.dark-theme .profile-popover button:hover { background: rgba(255, 255, 255, 0.05); }
+
+.topbar-desktop-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.profile-mobile-actions {
+  display: none;
+  flex-direction: column;
+  gap: 2px;
+}
 
 .dashboard-overview { display: flex; flex-direction: column; gap: 20px; }
 .dashboard-heading { display: flex; justify-content: space-between; align-items: center; gap: 20px; }
@@ -5211,6 +5225,14 @@ body.dark-theme .system-ai-message.is-ai > div {
 
   .topbar-search {
     display: none !important;
+  }
+
+  .topbar-desktop-actions {
+    display: none !important;
+  }
+
+  .profile-mobile-actions {
+    display: flex !important;
   }
 
   .btn-theme-topbar {

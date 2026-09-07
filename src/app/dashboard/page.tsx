@@ -1593,7 +1593,52 @@ const centralPacienteVazio = (): CentralPacienteData => ({
                <input aria-label="Buscar no sistema" placeholder="Buscar..." />
              </label>
  
-             <button className="btn-theme-topbar" onClick={alternarTemaTopbar} title="Alternar tema">               {temaEscuro ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}             </button>             <button className="btn-theme-topbar" onClick={() => triggerToast('Você não tem novas notificações.')} title="Notificações"><Bell className="w-5 h-5" /></button>             <button className="btn-theme-topbar" onClick={() => setAbaAtiva('aba-configuracoes')} title="Configurações"><Settings className="w-5 h-5" /></button>             <div className="profile-menu-wrap">               <button className="topbar-avatar" onClick={() => setMenuPerfilAberto(!menuPerfilAberto)} aria-expanded={menuPerfilAberto}>                 {nomeProfissional ? nomeProfissional.split(' ').map((n: string) => n[0]).slice(0, 2).join('').toUpperCase() : 'PS'}               </button>               {menuPerfilAberto && (                 <div className="profile-popover">                   <strong>{nomeProfissional}</strong>                   <span>{emailProfissional || 'Sessão ativa'}</span>                   <button onClick={() => triggerToast('Abrindo troca de senha...')}><RefreshCw className="w-4 h-4" /> Trocar senha</button>                   <button onClick={handleLogout}><LogOut className="w-4 h-4" /> Sair</button>                 </div>               )}             </div>           </div>         </header>          <main className={`main-content ${abaAtiva === 'aba-gestao-paciente' || abaAtiva === 'aba-pacientes' ? 'patient-mode' : ''}`} data-active-tab={abaAtiva} data-active-subtab={subAbaGestao}>           {billingBlocked && <div className="billing-lock-banner" role="alert"><div><ShieldAlert /><span><strong>{billingMessage || 'Ative sua conta para continuar.'}</strong><small>Escolha um plano e conclua o pagamento pelo Mercado Pago. A liberação acontece automaticamente após a confirmação.</small></span></div><button type="button" onClick={() => router.push(billingCheckoutUrl)}>Ativar minha conta <ArrowRight /></button></div>}                       
+              <div className="topbar-desktop-actions">
+                <button className="btn-theme-topbar" onClick={alternarTemaTopbar} title="Alternar tema">
+                  {temaEscuro ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+                </button>
+                <button className="btn-theme-topbar" onClick={() => triggerToast('Você não tem novas notificações.')} title="Notificações">
+                  <Bell className="w-5 h-5" />
+                </button>
+                <button className="btn-theme-topbar" onClick={() => setAbaAtiva('aba-configuracoes')} title="Configurações">
+                  <Settings className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="profile-menu-wrap">
+                <button className="topbar-avatar" onClick={() => setMenuPerfilAberto(!menuPerfilAberto)} aria-expanded={menuPerfilAberto}>
+                  {nomeProfissional ? nomeProfissional.split(' ').map((n: string) => n[0]).slice(0, 2).join('').toUpperCase() : 'PS'}
+                </button>
+                {menuPerfilAberto && (
+                  <div className="profile-popover">
+                    <strong>{nomeProfissional}</strong>
+                    <span>{emailProfissional || 'Sessão ativa'}</span>
+
+                    <div className="profile-mobile-actions">
+                      <button type="button" onClick={() => { alternarTemaTopbar(); setMenuPerfilAberto(false); }}>
+                        {temaEscuro ? <Sun className="w-4 h-4 text-amber-500" /> : <Moon className="w-4 h-4 text-cyan-600" />}
+                        {temaEscuro ? 'Tema Claro' : 'Tema Escuro'}
+                      </button>
+                      <button type="button" onClick={() => { triggerToast('Você não tem novas notificações.'); setMenuPerfilAberto(false); }}>
+                        <Bell className="w-4 h-4 text-blue-500" />
+                        Notificações
+                      </button>
+                      <button type="button" onClick={() => { setAbaAtiva('aba-configuracoes'); setMenuPerfilAberto(false); }}>
+                        <Settings className="w-4 h-4 text-slate-500" />
+                        Configurações
+                      </button>
+                    </div>
+
+                    <button onClick={() => triggerToast('Abrindo troca de senha...')}><RefreshCw className="w-4 h-4" /> Trocar senha</button>
+                    <button onClick={handleLogout}><LogOut className="w-4 h-4" /> Sair</button>
+                  </div>
+                )}
+              </div>
+            </div>
+          </header>
+
+          <main className={`main-content ${abaAtiva === 'aba-gestao-paciente' || abaAtiva === 'aba-pacientes' ? 'patient-mode' : ''}`} data-active-tab={abaAtiva} data-active-subtab={subAbaGestao}>
+            {billingBlocked && <div className="billing-lock-banner" role="alert"><div><ShieldAlert /><span><strong>{billingMessage || 'Ative sua conta para continuar.'}</strong><small>Escolha um plano e conclua o pagamento pelo Mercado Pago. A liberação acontece automaticamente após a confirmação.</small></span></div><button type="button" onClick={() => router.push(billingCheckoutUrl)}>Ativar minha conta <ArrowRight /></button></div>}                       
             {/* PAINEL GERAL SAAS */}
            {abaAtiva === 'aba-painel' && (
              <section className="tab-panel active dashboard-overview reveal-element">
