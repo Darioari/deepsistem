@@ -6,7 +6,7 @@ import { notifyAgendaBooking } from '@/lib/agenda-notifications';
 import { readProfessionalStore } from '@/lib/professional-profile';
 import { normalizeTenant } from '@/lib/tenant';
 import { appendAgendaItem } from '@/lib/operation-store';
-import { getTenantCustomLogo } from '@/lib/tenant-brand-server';
+import { getTenantCustomLogo, getTenantBrand } from '@/lib/tenant-brand-server';
 
 type DayRule = { enabled: boolean; start: string; end: string; breakStart?: string; breakEnd?: string };
 type SchedulingConfig = {
@@ -33,6 +33,7 @@ type SchedulingConfig = {
   advanceDays: number;
   modality: string;
   logotipo_url?: string;
+  logotipo_tamanho?: number;
   days: Record<string, DayRule>;
 };
 type Booking = { id: string; slug: string; tenant_id: string; date: string; time: string; duration: number; name: string; email: string; phone: string; modality: string; message?: string; status: string; createdAt: string };
@@ -41,7 +42,7 @@ type Store = { tenants: Record<string, SchedulingConfig>; bookings: Booking[] };
 const FILE = path.join(process.cwd(), 'backend', 'data', 'agendamentos-publicos.json');
 const weekdayKeys = ['domingo', 'segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado'];
 const defaultDays = Object.fromEntries(weekdayKeys.map((day, index) => [day, { enabled: index > 0 && index < 6, start: '08:00', end: '18:00', breakStart: '12:00', breakEnd: '13:00' }])) as Record<string, DayRule>;
-const fallback = (slug: string): SchedulingConfig => ({ slug, publicName: 'Atendimento psicológico', professionalTitle: 'Profissional da saúde mental', description: 'Conheça meu trabalho e escolha um horário disponível para solicitar seu atendimento.', email: '', phone: '', address: '', coverImageUrl: '', heroTitle: 'Cuidar de si também é uma forma de seguir em frente.', heroText: 'Psicoterapia com escuta cuidadosa, presença e um percurso construído no seu tempo.', aboutTitle: 'Um espaço seguro para compreender o que você está vivendo', aboutText: 'Cada história é única. O cuidado começa pela escuta e pela construção de um caminho coerente com a sua realidade.', servicesTitle: 'Como posso acompanhar você', services: 'Ansiedade e sobrecarga emocional\nAutoconhecimento e relações\nMudanças, perdas e novos ciclos', processTitle: 'Um processo construído com presença', processText: 'O atendimento começa pelo acolhimento, avança pela compreensão da sua história e se transforma em um caminho possível de cuidado.', ctaTitle: 'Vamos conversar?', ctaText: 'Escolha uma data disponível e solicite seu primeiro atendimento.', duration: 50, interval: 10, advanceDays: 60, modality: 'Presencial e online', logotipo_url: '', days: defaultDays });
+const fallback = (slug: string): SchedulingConfig => ({ slug, publicName: 'Atendimento psicológico', professionalTitle: 'Profissional da saúde mental', description: 'Conheça meu trabalho e escolha um horário disponível para solicitar seu atendimento.', email: '', phone: '', address: '', coverImageUrl: '', heroTitle: 'Cuidar de si também é uma forma de seguir em frente.', heroText: 'Psicoterapia com escuta cuidadosa, presença e um percurso construído no seu tempo.', aboutTitle: 'Um espaço seguro para compreender o que você está vivendo', aboutText: 'Cada história é única. O cuidado começa pela escuta e pela construção de um caminho coerente com a sua realidade.', servicesTitle: 'Como posso acompanhar você', services: 'Ansiedade e sobrecarga emocional\nAutoconhecimento e relações\nMudanças, perdas e novos ciclos', processTitle: 'Um processo construído com presença', processText: 'O atendimento começa pelo acolhimento, avança pela compreensão da sua história e se transforma em um caminho possível de cuidado.', ctaTitle: 'Vamos conversar?', ctaText: 'Escolha uma data disponível e solicite seu primeiro atendimento.', duration: 50, interval: 10, advanceDays: 60, modality: 'Presencial e online', logotipo_url: '', logotipo_tamanho: 48, days: defaultDays });
 
 function read(): Store { try { return { tenants: {}, bookings: [], ...JSON.parse(fs.readFileSync(FILE, 'utf8')) }; } catch { return { tenants: {}, bookings: [] }; } }
 function write(store: Store) { fs.mkdirSync(path.dirname(FILE), { recursive: true }); fs.writeFileSync(FILE, JSON.stringify(store, null, 2)); }
@@ -115,7 +116,8 @@ export async function GET(request: Request, { params }: { params: Promise<{ slug
     phone: config?.phone || profPhone,
     email: config?.email || profEmail,
     slug: tenant,
-    logotipo_url: getTenantCustomLogo(tenant),
+    logotipo_url: getTenantBrand(tenant).logotipo_url,
+    logotipo_tamanho: getTenantBrand(tenant).logotipo_tamanho,
   };
 
   const date = new URL(request.url).searchParams.get('date');

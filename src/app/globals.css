@@ -117,7 +117,7 @@ button, a, input, select, textarea { font-family: inherit; }
 .brand-logo.inverse { color: #fff; }
 .brand-logo.compact { justify-content: center; }
 .brand-logo.compact .brand-custom-logo { width: 32px; height: 32px; max-width: 32px; max-height: 32px; object-fit: contain; }
-.brand-custom-logo { display: block; max-width: 145px; max-height: 42px; object-fit: contain; }
+.brand-custom-logo { display: block; max-width: var(--brand-logo-max-w, 360px); max-height: var(--brand-logo-h, 130px); width: auto; height: auto; object-fit: contain; }
 .sidebar-brand > .brand-logo, .sidebar-brand .brand-logo { color: var(--text-sidebar-main); }
 .sidebar-brand .brand-logo strong, .sidebar-brand .brand-logo strong span { color: currentColor; font-size: 1.1rem; font-weight: 700; letter-spacing: -.035em; }
 .public-brand-copy { position: relative; z-index: 1; max-width: 520px; margin: 0; padding: 18px 20px; border: 1px solid rgba(255,255,255,.16); border-radius: 18px; background: linear-gradient(180deg, rgba(24,53,61,.28), rgba(24,53,61,.52)); box-shadow: 0 16px 42px rgba(24,53,61,.16); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
@@ -5289,5 +5289,36 @@ body.dark-theme .system-ai-message.is-ai > div {
   line-height: 1.5 !important;
   white-space: pre-wrap !important;
   display: block !important;
+}
+
+/* Configuração e Pré-visualização de Tamanho do Logotipo */
+.settings-brand-preview {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 20px !important;
+  min-height: 120px !important;
+  padding: 24px 28px !important;
+  border-radius: 12px !important;
+}
+.settings-brand-preview .brand-logo {
+  max-width: 75% !important;
+}
+.settings-preview-tag {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  text-align: right;
+}
+.settings-logo-size-control {
+  background: var(--bg-app);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin-top: 4px;
+}
+.lp-nav .brand-logo {
+  max-width: 60%;
 }
 

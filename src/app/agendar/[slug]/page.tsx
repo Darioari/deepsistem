@@ -30,6 +30,7 @@ type Config = {
   modality: string;
   advanceDays: number;
   logotipo_url?: string;
+  logotipo_tamanho?: number;
   days: Record<string, DayRule>;
 };
 const weekdayKeys = ['domingo', 'segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado'];
@@ -118,7 +119,7 @@ export default function PublicSchedulingPage() {
   if (done) return (
     <main className="public-scheduling-page">
       <section className="public-booking-success">
-        <BrandLogo customLogoUrl={config.logotipo_url || undefined} />
+        <BrandLogo customLogoUrl={config.logotipo_url || undefined} logoSize={config.logotipo_tamanho} />
         <CheckCircle2 />
         <h1>Solicitação de agendamento recebida</h1>
         <p>O horário de <strong>{new Date(`${date}T12:00:00`).toLocaleDateString('pt-BR')}</strong>, às <strong>{time}</strong>, foi reservado temporariamente.</p>
@@ -139,7 +140,7 @@ export default function PublicSchedulingPage() {
   return (
     <main className="professional-lp">
       <nav className="lp-nav">
-        <BrandLogo customLogoUrl={config.logotipo_url || undefined} />
+        <BrandLogo customLogoUrl={config.logotipo_url || undefined} logoSize={config.logotipo_tamanho} />
         <div>
           <a href="#sobre">Sobre</a>
           <a href="#atendimento">Atendimento</a>
@@ -288,7 +289,7 @@ export default function PublicSchedulingPage() {
       </section>
 
       <footer className="lp-footer">
-        <BrandLogo customLogoUrl={config.logotipo_url || undefined} />
+        <BrandLogo customLogoUrl={config.logotipo_url || undefined} logoSize={config.logotipo_tamanho} />
         <p>{config.publicName} · {config.professionalTitle}</p>
         <span>Página profissional criada com PsicSystem</span>
       </footer>
