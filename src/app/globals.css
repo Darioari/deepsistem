@@ -5059,6 +5059,19 @@ body.dark-theme .main-content:not(.patient-mode) {
   font-family: monospace;
   font-weight: 600;
 }
+.system-ai-content strong {
+  color: #0f172a !important;
+  font-weight: 750 !important;
+}
+body.dark-theme .system-ai-content strong {
+  color: #f1f5f9 !important;
+}
+.system-ai-message.is-ai > div {
+  color: #1e293b !important;
+}
+body.dark-theme .system-ai-message.is-ai > div {
+  color: #e2e8f0 !important;
+}
 
 /* ==========================================================================
    MENU SUPERIOR EM DISPOSITIVOS MÓVEIS (CELULAR / TABLET PEQUENO)

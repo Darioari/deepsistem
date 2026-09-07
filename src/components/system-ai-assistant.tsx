@@ -59,7 +59,7 @@ function renderFormattedText(text: string) {
     const parts = line.split(/(\*\*[^*]+\*\*|`[^`]+`)/g);
     const renderedParts = parts.map((part, pIdx) => {
       if (part.startsWith('**') && part.endsWith('**')) {
-        return <strong key={pIdx} className="font-semibold text-teal-950 dark:text-teal-200">{part.slice(2, -2)}</strong>;
+        return <strong key={pIdx} className="font-bold text-slate-900 dark:text-slate-100">{part.slice(2, -2)}</strong>;
       }
       if (part.startsWith('`') && part.endsWith('`')) {
         return <code key={pIdx} className="system-ai-code-pill">{part.slice(1, -1)}</code>;
