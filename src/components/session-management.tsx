@@ -212,26 +212,6 @@ export function SessionManagement({ patients, embedded = false, plan = 'start' }
             <button className="online-care-button" onClick={openOnlineCare} title="Entrar na chamada de vídeo">
               <Video className="w-4 h-4" /> Chamada de vídeo
             </button>
-            {isCallStarted && (
-              <>
-                <button
-                  className={`session-video-link-button ${copiedVideoLink ? 'copied' : ''}`}
-                  onClick={copyVideoLink}
-                  title="Copiar link da chamada de vídeo para o paciente"
-                >
-                  {copiedVideoLink ? <><Check className="w-4 h-4 text-emerald-600" /> Link copiado!</> : <><Link2 className="w-4 h-4" /> Copiar link do vídeo</>}
-                </button>
-                {Boolean(patient?.telefone && patient.telefone.replace(/\D/g, '').length >= 10) && (
-                  <button
-                    className="session-video-whatsapp-button"
-                    onClick={sendVideoWhatsapp}
-                    title="Enviar link da chamada de vídeo pelo WhatsApp"
-                  >
-                    <WhatsAppIcon className="w-4 h-4 text-emerald-600" /> Enviar link
-                  </button>
-                )}
-              </>
-            )}
           </div>
         )}
         <button onClick={() => setSummaryOpen(true)}>Resumo do Paciente</button>
@@ -266,7 +246,7 @@ export function SessionManagement({ patients, embedded = false, plan = 'start' }
         <section className="summary-focus"><span className="summary-badge">Foco clínico atual</span><p>{editorValueToText(selected.notes) || patient?.tratamentos || 'Ainda não há anotações registradas para esta sessão. Use este espaço para consolidar o foco clínico atual.'}</p></section>
         <section className="summary-detail-grid"><article><h3><ClipboardList /> Informações essenciais</h3><ul><li><span>Telefone</span><strong>{patient?.telefone || 'Não informado'}</strong></li><li><span>E-mail</span><strong>{patient?.email || 'Não informado'}</strong></li><li><span>Profissão</span><strong>{patient?.profissao || 'Não informada'}</strong></li><li><span>Gênero</span><strong>{patient?.genero || 'Não informado'}</strong></li><li><span>Localização</span><strong>{[patient?.endereco?.cidade, patient?.endereco?.bairro].filter(Boolean).join(' · ') || 'Não informada'}</strong></li></ul></article><article><h3><Users /> Rede e continuidade do cuidado</h3><ul><li><span>Contato de emergência</span><strong>{patient?.contato_emergencia || 'Não informado'}</strong></li><li><span>Sessões registradas</span><strong>{sessions.filter(item => item.patientId === selected.patientId).length}</strong></li><li><span>Evolução atual</span><strong>{selected.evolution ? 'Registrada' : 'Pendente'}</strong></li><li><span>Próximo passo</span><strong>{selected.evolution || 'Registrar evolução após a sessão'}</strong></li></ul></article></section>
       </div></div></ModalPortal>}
-      {isPro && onlineOpen && selected.roomToken && <ModalPortal><div className="modal-overlay online-room-overlay"><div className="online-room-modal"><button className="online-close" onClick={()=>setOnlineOpen(false)}><X/></button><OnlineCareRoom token={selected.roomToken} role="professional" name={selected.patientName} onTranscript={saveAutomaticTranscript} onSaveNote={note => update('notes', `${selected.notes}${selected.notes ? '\n\n' : ''}[Anotação Online]\n${note}`)}/></div></div></ModalPortal>}
+      {isPro && onlineOpen && selected.roomToken && <ModalPortal><div className="modal-overlay online-room-overlay"><div className="online-room-modal"><button className="online-close" onClick={()=>setOnlineOpen(false)}><X/></button><OnlineCareRoom token={selected.roomToken} role="professional" name={selected.patientName} patientPhone={patient?.telefone} onTranscript={saveAutomaticTranscript} onSaveNote={note => update('notes', `${selected.notes}${selected.notes ? '\n\n' : ''}[Anotação Online]\n${note}`)}/></div></div></ModalPortal>}
     </>}
   </section>;
 }

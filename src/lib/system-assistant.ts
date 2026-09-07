@@ -36,7 +36,7 @@ export const SYSTEM_GUIDES: Record<string, SystemGuide> = {
       '**1. Iniciar nova sessão:** Clique no botão **"Nova sessão"** (ícone de calendário) para abrir o atendimento clínico do paciente.',
       '**2. Anotações salvas automaticamente:** Dentro da sessão, utilize os campos de *"Anotações da sessão"* (privadas) e *"Evolução do prontuário"*. Tudo o que você digita é **salvo automaticamente pelo sistema**.',
       '**3. Chamada de vídeo:** Para atender online, clique no botão **"Chamada de vídeo"** para abrir a sala virtual diretamente no navegador.',
-      '**4. Enviar link ao paciente (aparece ao iniciar a chamada):** Assim que você inicia a chamada de vídeo, os botões de compartilhamento aparecem automaticamente ao lado:\n  • **Se o paciente tiver WhatsApp cadastrado:** Clique em **"Enviar link"** (ícone do WhatsApp). O sistema abre a conversa direto no WhatsApp com o link da sala pronto na mensagem.\n  • **Se o paciente não tiver WhatsApp:** Clique em **"Copiar link do vídeo"** para copiar a URL da sala e colar onde preferir.',
+      '**4. Enviar ou copiar o link com a tela aberta:** Dentro da própria tela de atendimento de vídeo, na lateral superior em *"Link do paciente"*, você tem os botões dedicados:\n  • **Se o paciente tiver WhatsApp cadastrado:** Clique em **"Enviar link"** (ícone do WhatsApp) para abrir a conversa com o paciente com o link pronto para envio.\n  • **Se o paciente não tiver WhatsApp:** Clique em **"Copiar link"** para copiar a URL da sala e colar onde preferir.',
       '**5. Rascunho com Aura:** Clique em **"Gerar rascunho com Aura"** para que a IA estruture uma síntese da sessão para sua conferência e revisão profissional.',
     ],
     suggestions: [
@@ -46,8 +46,8 @@ export const SYSTEM_GUIDES: Record<string, SystemGuide> = {
       'Como usar o rascunho da Aura?',
     ],
     knowledge: [
-      'O botão de atendimento online foi renomeado para "Chamada de vídeo".',
-      'O botão "Copiar link do vídeo" copia o link https://deepsistem.com.br/atendimento/[token] para a área de transferência.',
+      'O botão "Chamada de vídeo" abre a sala de atendimento online diretamente na tela.',
+      'Na tela da chamada de vídeo, o painel lateral exibe os botões "Copiar link" e "Enviar link" via WhatsApp.',
       'O botão "Enviar link" com ícone do WhatsApp abre o WhatsApp diretamente com a mensagem pronta se o paciente tiver telefone cadastrado.',
       'Todas as anotações e evoluções de sessão são salvas automaticamente pelo sistema conforme o profissional digita.',
       'O rascunho da Aura organiza as notas e transcrições para revisão e validação do profissional.',
@@ -411,10 +411,10 @@ export function localSystemAssistantAnswer(context: SystemAssistantContext, ques
       answer: `👉 **Passo a passo das Sessões e Chamada de Vídeo:**\n\n` +
         `1. **Criar sessão:** Clique no botão **"Nova sessão"** para iniciar o atendimento.\n\n` +
         `2. **Anotações salvas automaticamente:** Dentro da sessão, você tem o campo de anotações privadas e evolução clínica. Tudo o que você digita é **salvo automaticamente pelo sistema**, sem risco de perder nada!\n\n` +
-        `3. **Iniciar a chamada:** Clique no botão **"Chamada de vídeo"** para entrar na sala virtual com áudio e vídeo.\n\n` +
-        `4. **Compartilhar o link com o paciente:**\n` +
+        `3. **Iniciar a chamada:** Clique no botão **"Chamada de vídeo"** para abrir a sala virtual na tela.\n\n` +
+        `4. **Compartilhar o link na própria tela:** Com a tela de vídeo aberta, você tem na barra lateral superior os botões:\n` +
         `  • **Se o paciente tiver WhatsApp cadastrado:** Clique em **"Enviar link"** (ícone WhatsApp) para abrir a conversa já com a mensagem e o link pronto.\n` +
-        `  • **Se o paciente não tiver WhatsApp:** Clique em **"Copiar link do vídeo"** para copiar e colar no e-mail ou onde preferir.\n\n` +
+        `  • **Se o paciente não tiver WhatsApp:** Clique em **"Copiar link"** para copiar e colar no e-mail ou onde preferir.\n\n` +
         `5. **Rascunho com Aura:** Clique em **"Gerar rascunho com Aura"** para que a IA estruture as anotações da sessão para sua revisão.`,
       target,
       suggestions: SYSTEM_GUIDES.sessoes.suggestions,
