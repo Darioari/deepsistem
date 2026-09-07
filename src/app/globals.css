@@ -5056,3 +5056,172 @@ body.dark-theme .main-content:not(.patient-mode) {
   font-family: monospace;
   font-weight: 600;
 }
+
+/* ==========================================================================
+   MENU SUPERIOR EM DISPOSITIVOS MÓVEIS (CELULAR / TABLET PEQUENO)
+   Transforma a barra lateral com ícones em uma barra no topo para liberar
+   100% da largura útil da tela para os pacientes, agenda e rotinas.
+   ========================================================================== */
+@media (max-width: 768px) {
+  .dashboard-layout {
+    flex-direction: column !important;
+    min-height: 100vh;
+  }
+
+  .sidebar,
+  .sidebar.collapsed {
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    min-height: auto !important;
+    flex-direction: column !important;
+    border-right: none !important;
+    border-bottom: 1px solid var(--border-sidebar, #e2e8f0);
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 90 !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    background-color: var(--bg-sidebar, #ffffff);
+  }
+
+  .sidebar .sidebar-header,
+  .sidebar.collapsed .sidebar-header {
+    display: none !important;
+  }
+
+  .sidebar .sidebar-footer,
+  .sidebar.collapsed .sidebar-footer {
+    display: none !important;
+  }
+
+  .sidebar .sidebar-body,
+  .sidebar.collapsed .sidebar-body {
+    flex: none !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 4px !important;
+    padding: 6px 8px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .sidebar .sidebar-body::-webkit-scrollbar,
+  .sidebar.collapsed .sidebar-body::-webkit-scrollbar {
+    display: none;
+  }
+
+  .sidebar .menu-group {
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 4px !important;
+    flex-shrink: 0;
+  }
+
+  .sidebar .menu-group-title {
+    display: none !important;
+  }
+
+  .sidebar .menu-link,
+  .sidebar.collapsed .menu-link {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 40px !important;
+    min-width: 40px !important;
+    height: 38px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border-radius: 8px !important;
+    border: 1px solid transparent;
+    border-left: none !important;
+    background: transparent;
+    flex-shrink: 0;
+  }
+
+  .sidebar .menu-link span,
+  .sidebar.collapsed .menu-link span {
+    display: none !important;
+  }
+
+  .sidebar .menu-link svg {
+    width: 20px !important;
+    height: 20px !important;
+    min-width: 20px !important;
+    margin: 0 !important;
+  }
+
+  .sidebar .menu-link.active {
+    background-color: var(--sidebar-active-item, #e6f7f9) !important;
+    border-color: color-mix(in srgb, var(--color-primary, #09a4b3) 30%, transparent) !important;
+    color: var(--color-primary, #09a4b3) !important;
+    border-radius: 8px !important;
+  }
+
+  /* Ajuste no topbar em mobile para ficar limpo e compacto */
+  .topbar {
+    padding: 10px 14px !important;
+    min-height: 52px !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+
+  .topbar-left {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .breadcrumbs {
+    font-size: 0.78rem !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .breadcrumb-greeting {
+    display: none !important;
+  }
+
+  .breadcrumb-divider {
+    display: none !important;
+  }
+
+  .topbar-right {
+    gap: 8px !important;
+  }
+
+  .topbar-search {
+    display: none !important;
+  }
+
+  .btn-theme-topbar {
+    width: 34px !important;
+    height: 34px !important;
+  }
+
+  .btn-theme-topbar svg {
+    width: 17px !important;
+    height: 17px !important;
+  }
+
+  .topbar-avatar {
+    width: 34px !important;
+    height: 34px !important;
+    font-size: 0.75rem !important;
+  }
+
+  .main-content {
+    padding: 12px 10px !important;
+  }
+
+  .gestao-paciente-container {
+    gap: 16px !important;
+  }
+
+  .patient-roster {
+    min-height: auto !important;
+  }
+}
+
