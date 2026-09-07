@@ -13,14 +13,14 @@ import { AgendaView } from '@/components/agenda-view';
  import { SettingsHub, type SettingsSection } from '@/components/settings-hub'; import { FormBuilder } from '@/components/form-builder';
  import { AiIcon } from '@/components/ai-icon';
  import { TermsManagement } from '@/components/terms-management'; import { ConsolidatedFinance } from '@/components/consolidated-finance'; import { SetupChecklist } from '@/components/setup-checklist'; import { ProductTour } from '@/components/product-tour'; import { DESIGN_TOKENS } from '@/lib/design-system'; import { 
-   Users, Mic, Clipboard, Activity, DollarSign, Settings, LogOut, 
+   Users, Mic, Clipboard, ClipboardList, Activity, DollarSign, Settings, LogOut, 
    Plus, Check, Copy, Percent, Moon, Sun, AlertCircle, RefreshCw, X,
    ChevronLeft, ChevronRight, LayoutGrid, Heart, ShieldAlert, Award,
    Calendar, MessageSquare, HelpCircle, Eye, Search, Sliders, Zap, Bell,
    Pencil, Sparkles, Pill, TrendingUp, BookOpen, FileText, MoreHorizontal,
    FolderPlus, PlusCircle, Trash, Upload, Download, FilePlus, ShieldCheck, ChevronDown,
    ArrowRight, FileType, CheckSquare, HeartHandshake, User, Brain, MapPin, Contact,
-   Clock, Globe, UserPlus, ArrowUp, ArrowDown, Hourglass
+   Clock, Globe, UserPlus, ArrowUp, ArrowDown, Hourglass, UserCheck, UserX
  } from 'lucide-react';
  
  interface Paciente {
@@ -143,23 +143,36 @@ import { AgendaView } from '@/components/agenda-view';
    time: string;
  }
  
- interface CentralPacienteData {
-   notas: Array<{ id: string; titulo: string; conteudo: string; criado_em: string }>;
-   documentos: Array<{ id: string; nome: string; categoria: string; criado_em: string; url?: string; mime_type?: string; tamanho_bytes?: number }>;
-   medicacoes: Array<{ id: string; nome: string; dosagem: string; frequencia: string }>;
-   encaminhamentos: Array<{ id: string; descricao: string; criado_em: string }>;
-   conversas_aura: ChatMensagem[];
-   anamnese: { historico_familiar: string; desenvolvimento_neuropsicomotor: string; historico_escolar: string; historico_ocupacional: string; historico_medico: string };
-   resumo_clinico: { queixas_principais: string; hipoteses_diagnosticas: string; alertas_medicos: string; exames_laboratoriais: string; medicamentos: string; observacoes: string };
-   reabilitacao: { dominios: string[]; baseline: string; rede_apoio: string; formulacao_caso: string; prioridades_compartilhadas: string; objetivos_funcionais: string; estrategias: string; frequencia_duracao: string; responsaveis: string; indicadores: string; revisao_em: string; metas: Meta[] };
- }
- 
- const centralPacienteVazio = (): CentralPacienteData => ({
-   notas: [], documentos: [], medicacoes: [], encaminhamentos: [], conversas_aura: [],
-   anamnese: { historico_familiar: '', desenvolvimento_neuropsicomotor: '', historico_escolar: '', historico_ocupacional: '', historico_medico: '' },
-   resumo_clinico: { queixas_principais: '', hipoteses_diagnosticas: '', alertas_medicos: '', exames_laboratoriais: '', medicamentos: '', observacoes: '' },
-   reabilitacao: { dominios: [], baseline: '', rede_apoio: '', formulacao_caso: '', prioridades_compartilhadas: '', objetivos_funcionais: '', estrategias: '', frequencia_duracao: '', responsaveis: '', indicadores: '', revisao_em: '', metas: [] },
- });
+ interface FormResponseEntry {
+  id: string;
+  form_slug: string;
+  form_titulo: string;
+  data_envio: string;
+  respostas: Array<{
+    id_pergunta: string;
+    pergunta: string;
+    resposta: string;
+  }>;
+}
+
+interface CentralPacienteData {
+  notas: Array<{ id: string; titulo: string; conteudo: string; criado_em: string }>;
+  documentos: Array<{ id: string; nome: string; categoria: string; criado_em: string; url?: string; mime_type?: string; tamanho_bytes?: number }>;
+  medicacoes: Array<{ id: string; nome: string; dosagem: string; frequencia: string }>;
+  encaminhamentos: Array<{ id: string; descricao: string; criado_em: string }>;
+  conversas_aura: ChatMensagem[];
+  respostas_formulario: FormResponseEntry[];
+  anamnese: { historico_familiar: string; desenvolvimento_neuropsicomotor: string; historico_escolar: string; historico_ocupacional: string; historico_medico: string };
+  resumo_clinico: { queixas_principais: string; hipoteses_diagnosticas: string; alertas_medicos: string; exames_laboratoriais: string; medicamentos: string; observacoes: string };
+  reabilitacao: { dominios: string[]; baseline: string; rede_apoio: string; formulacao_caso: string; prioridades_compartilhadas: string; objetivos_funcionais: string; estrategias: string; frequencia_duracao: string; responsaveis: string; indicadores: string; revisao_em: string; metas: Meta[] };
+}
+
+const centralPacienteVazio = (): CentralPacienteData => ({
+  notas: [], documentos: [], medicacoes: [], encaminhamentos: [], conversas_aura: [], respostas_formulario: [],
+  anamnese: { historico_familiar: '', desenvolvimento_neuropsicomotor: '', historico_escolar: '', historico_ocupacional: '', historico_medico: '' },
+  resumo_clinico: { queixas_principais: '', hipoteses_diagnosticas: '', alertas_medicos: '', exames_laboratoriais: '', medicamentos: '', observacoes: '' },
+  reabilitacao: { dominios: [], baseline: '', rede_apoio: '', formulacao_caso: '', prioridades_compartilhadas: '', objetivos_funcionais: '', estrategias: '', frequencia_duracao: '', responsaveis: '', indicadores: '', revisao_em: '', metas: [] },
+});
  
  interface SpeechRecognitionEventLike { results: ArrayLike<{ 0: { transcript: string } }> }
  interface SpeechRecognitionErrorEventLike { error: string }
@@ -408,6 +421,7 @@ import { AgendaView } from '@/components/agenda-view';
     const [novoPacPagamento, setNovoPacPagamento] = useState('');
  
    const [buscaPacienteQuery, setBuscaPacienteQuery] = useState(''); 
+   const [filtroPacienteStatus, setFiltroPacienteStatus] = useState<'ativos' | 'inativos' | 'todos'>('ativos');
    const [linkGerado, setLinkGerado] = useState('');
    const [cupomInput, setCupomInput] = useState('');
    const [cupomAplicado, setCupomAplicado] = useState(false);
@@ -762,6 +776,7 @@ import { AgendaView } from '@/components/agenda-view';
        const data: CentralPacienteData = {
          ...empty,
          ...received,
+         respostas_formulario: received.respostas_formulario || [],
          anamnese: { ...empty.anamnese, ...received.anamnese },
          resumo_clinico: { ...empty.resumo_clinico, ...received.resumo_clinico },
          reabilitacao: { ...empty.reabilitacao, ...received.reabilitacao },
@@ -1100,6 +1115,31 @@ import { AgendaView } from '@/components/agenda-view';
    // ----------------------------------------------------
    // OPERAÇÕES GESTÃO DO PACIENTE (EVOLUÇÃO, MEDICAÇÕES)
    // ----------------------------------------------------
+   async function handleAlternarStatusPaciente(pacienteAlvo?: Paciente | null) {
+      const p = pacienteAlvo || pacienteSelecionado;
+      if (!p?.id) return;
+      const novoStatus = p.status === 'inativo' ? 'ativo' : 'inativo';
+      try {
+        const res = await apiFetch('/api/pacientes', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: p.id, status: novoStatus })
+        });
+        if (!res.ok) {
+          throw new Error('Falha ao atualizar status do paciente.');
+        }
+        setPacientes(atuais => {
+          const atualizados = atuais.map(item => item.id === p.id ? { ...item, status: novoStatus } : item);
+          try { localStorage.setItem('deepsistem_cached_patients', JSON.stringify(atualizados)); } catch {}
+          return atualizados;
+        });
+        setPacienteSelecionado(prev => prev && prev.id === p.id ? { ...prev, status: novoStatus } : prev);
+        triggerToast(novoStatus === 'inativo' ? `${p.nome} foi inativado(a).` : `${p.nome} foi reativado(a)!`);
+      } catch (err) {
+        alert('Não foi possível alterar a situação do paciente.');
+      }
+    }
+
    function handleAdicionarEvolucao(e: React.FormEvent) {
      e.preventDefault();
      if (!evolucaoAtaCompleta.trim()) return;
@@ -1422,11 +1462,16 @@ import { AgendaView } from '@/components/agenda-view';
      }
    }
  
-   // Filtrar pacientes
-   const pacientesFiltrados = pacientes.filter(p => 
-     p.nome.toLowerCase().includes(buscaPacienteQuery.toLowerCase()) || 
-     (p.iniciais && p.iniciais.toLowerCase().includes(buscaPacienteQuery.toLowerCase()))
-   );
+    // Filtrar pacientes
+    const pacientesFiltrados = pacientes.filter(p => {
+      const atendeBusca = p.nome.toLowerCase().includes(buscaPacienteQuery.toLowerCase()) || 
+        (p.iniciais && p.iniciais.toLowerCase().includes(buscaPacienteQuery.toLowerCase()));
+      if (!atendeBusca) return false;
+      const ehInativo = p.status === 'inativo';
+      if (filtroPacienteStatus === 'ativos') return !ehInativo;
+      if (filtroPacienteStatus === 'inativos') return ehInativo;
+      return true;
+    });
    const agendaPeriodoInicio = new Date();   agendaPeriodoInicio.setHours(12, 0, 0, 0);   agendaPeriodoInicio.setDate(agendaPeriodoInicio.getDate() - agendaPeriodoInicio.getDay() + agendaPeriodoOffset * 7);   const agendaPeriodoFim = new Date(agendaPeriodoInicio);   agendaPeriodoFim.setDate(agendaPeriodoInicio.getDate() + 6);   const agendaMesNome = new Intl.DateTimeFormat('pt-BR', { month: 'long' });   const agendaDataCurta = (data: Date) => new Intl.DateTimeFormat('pt-BR', { day: 'numeric', month: 'short' }).format(data).replace('.', '');   const agendaPeriodoTitulo = agendaPeriodoVista === 'dia'     ? `${agendaDataCurta(agendaPeriodoInicio)} de ${agendaPeriodoInicio.getFullYear()}`     : agendaPeriodoVista === 'mes'       ? `${agendaMesNome.format(agendaPeriodoInicio)} de ${agendaPeriodoInicio.getFullYear()}`       : `${agendaDataCurta(agendaPeriodoInicio)} – ${agendaDataCurta(agendaPeriodoFim)} de ${agendaPeriodoFim.getFullYear()}`;   const compromissosFiltrados = bloqueiosAgenda.filter(item => {     const data = new Date(`${item.data}T12:00:00`);
      return (agendaMes === 'todos' || data.getMonth() + 1 === Number(agendaMes)) &&
        (agendaAno === 'todos' || data.getFullYear() === Number(agendaAno)) &&
@@ -1782,7 +1827,93 @@ import { AgendaView } from '@/components/agenda-view';
               </section>
             )}
 
-            {abaAtiva === 'aba-form' && <FormBuilder />}            {abaAtiva === 'aba-termos' && <TermsManagement patients={pacientes.map(patient => ({ id: patient.id, nome: patient.nome, email: patient.email }))} />}            {abaAtiva === 'aba-financeiro' && <ConsolidatedFinance />}            {/* ABA: PACIENTES & ONBOARDING */}           {abaAtiva === 'aba-pacientes' && (             <section className="tab-panel active reveal-element">               <div className="pacientes-section">                                  <div className="section-header">                   <div>                     <h2 className="text-xl font-bold tracking-tight">Pacientes — Gestão</h2>                     <p className="text-sm text-gray-500">Visão de consultório: acompanhe cada paciente, próximas consultas e status clínico.</p>                   </div>                   <div className="flex items-center gap-2">                     <button onClick={() => carregarPacientes()} className="btn-action px-3 py-2 text-xs flex items-center gap-1.5" title="Sincronizar lista de pacientes">                       <RefreshCw className="w-3.5 h-3.5" />                       Sincronizar                     </button>                     <button onClick={() => { setEditandoCadastroPaciente(false); setModalNovoPacienteAtivo(true); }} className="btn-primary w-auto px-5 py-2.5 text-xs flex items-center gap-1.5 shadow-sm bg-indigo-950">                       <Plus className="w-4 h-4" />                       Novo Paciente                     </button>                   </div>                 </div>                  <div className="flex gap-4 items-center mt-4">                   <div className="relative flex-1 max-w-[320px]">                     <Search className="w-4 h-4 text-gray-400 absolute left-3 top-3" />                     <input                        type="text"                        className="form-control pl-9 text-xs py-2"                        placeholder="Buscar por nome ou iniciais..."                        value={buscaPacienteQuery}                       onChange={(e) => setBuscaPacienteQuery(e.target.value)}                     />                   </div>                   <select className="form-control text-xs py-2 w-auto" style={{ width: '120px' }}>                     <option value="Todos">Todos</option>                     <option value="Ativos">Ativos</option>                     <option value="Onboarding">Onboarding</option>                   </select>                 </div>                  <div className="pacientes-grid-cards mt-6">                   {pacientesFiltrados.map(p => (                     <div key={p.id} className="paciente-card-gestao card-glass">                       <div>                         <div className="paciente-card-header">                           <div className="paciente-card-info">                             <div className="paciente-card-iniciais">                               {p.iniciais || p.nome.substring(0, 2).toUpperCase()}                             </div>                             <div>                               <h4 className="paciente-card-nome">{p.nome}</h4>                               <span className="paciente-card-sub">{p.escolaridade || 'F90 - F21'}</span>                             </div>                           </div>                           <span className={`badge ${p.status === 'ativo' ? 'badge-ativo' : 'badge-onboarding'} text-[9px] px-2 py-0.5 rounded-full font-bold`}>                             {p.status}                           </span>                         </div>                          <div className="paciente-card-divider" />                          <div className="paciente-card-boxes">                           <div className="paciente-card-box">                             <span className="title">Última Consulta</span>                             <span className="val">23/07/2026</span>                           </div>                           <div className="paciente-card-box">                             <span className="title">Próxima</span>                             <span className="val text-gray-400 font-bold">A agendar</span>                           </div>                         </div>                       </div>                        <div className="flex justify-between items-center mt-2 pt-2 border-t border-gray-50 dark:border-gray-900">                         <button                            onClick={() => {                             setPacienteSelecionado(p);                             setAbaAtiva('aba-gestao-paciente');                           }}                            className="paciente-card-link text-xs flex items-center gap-1.5"                         >                           <Eye className="w-3.5 h-3.5 text-gray-400" />                           Prontuário clínico                         </button>                                                  {p.status === 'onboarding' && (                           <button onClick={() => copiarLinkQuiz(p.onboarding_token)} className="btn-action text-[10px] py-1 px-2.5">                             Copiar Link                           </button>                         )}                       </div>                     </div>                   ))}                   {pacientesFiltrados.length === 0 && (                     <div className="col-span-full text-center py-10 bg-white dark:bg-gray-900/10 border border-gray-100 dark:border-gray-800 rounded-md">                       <p className="text-xs text-gray-400">Nenhum paciente encontrado com esta busca.</p>                     </div>                   )}                 </div>                </div>             </section>           )}            {/* ABA: GESTÃO DO PACIENTE */}           {abaAtiva === 'aba-gestao-paciente' && (             <section className="gestao-paciente-container active reveal-element">                              <aside className="patient-roster">                 <div className="patient-roster-actions flex items-center gap-2">                   <button onClick={() => { setEditandoCadastroPaciente(false); setModalNovoPacienteAtivo(true); }} className="btn-primary flex-1"><Plus className="w-4 h-4" /> Nova pessoa</button>                   <button onClick={() => carregarPacientes()} className="btn-action px-2.5 py-2" title="Sincronizar pacientes"><RefreshCw className="w-3.5 h-3.5" /></button>                 </div>                 <label className="patient-roster-search"><Search className="w-4 h-4" /><input value={buscaPacienteQuery} onChange={e => setBuscaPacienteQuery(e.target.value)} placeholder="Buscar por nome ou CPF..." /></label>                 <div className="patient-roster-meta"><span>{pacientesFiltrados.length} resultados</span><strong>Total: {pacientes.length}</strong></div>                 <div className="patient-roster-list">                   {pacientesFiltrados.map(paciente => (                     <button key={paciente.id} className={`patient-roster-item ${pacienteSelecionado?.id === paciente.id ? 'active' : ''}`} onClick={() => { setPacienteSelecionado(paciente); setSubAbaGestao('resumo'); }}>                       <span className="patient-roster-avatar">{paciente.iniciais || paciente.nome.split(' ').map(n => n[0]).join('').slice(0, 2)}</span>                       <span className="patient-roster-copy"><strong>{paciente.nome}</strong></span>                       <ChevronRight className="w-4 h-4" />                     </button>                   ))}                 </div>               </aside>                {/* Área Principal de Prontuário Clínico (Direita) */}               <div className="flex flex-col gap-6">                  <header className="patient-central-header">                   <div className="patient-central-identity">                     <span className="patient-central-avatar">{pacienteSelecionado?.iniciais || pacienteSelecionado?.nome.split(' ').map(n => n[0]).join('').slice(0, 2) || 'PS'}</span>                     <div><h2>{pacienteSelecionado?.nome || 'Selecione um paciente'}</h2></div>                   </div>                   <div className="patient-central-actions">{pacienteSelecionado && <PatientPdfSummaryButton patient={pacienteSelecionado} />}<button className="btn-action"><MessageSquare className="w-4 h-4" /> WhatsApp</button><button onClick={() => { setEditandoCadastroPaciente(true); setModalNovoPacienteAtivo(true); }} className="btn-primary w-auto px-4 py-2 text-xs"><Pencil className="w-4 h-4" /> Editar</button></div>                 </header>                  <div className={`patient-tabs-shell ${!patientTabsPrevious && !patientTabsNext ? 'no-arrows' : !patientTabsPrevious ? 'only-next' : !patientTabsNext ? 'only-previous' : ''}`}>                   {patientTabsPrevious && <button className="patient-tabs-arrow previous" onClick={() => patientTabsRef.current?.scrollBy({ left: -320, behavior: 'smooth' })} aria-label="Mostrar abas anteriores"><ChevronLeft /></button>}                   <nav ref={patientTabsRef} className="patient-central-tabs" aria-label="Central do paciente">                     {[                       ['resumo', 'Identificação', BookOpen], ['neuroavaliacao', 'Avaliação PSI', Brain], ['evolucao', 'Sessões', TrendingUp], ['estudo-caso-formula', 'Estudo de caso', Sliders], ['reabilitacao', 'Reabilitação', Activity], ['medicacoes', 'Resumo Clínico', Pill], ['documentos', 'Documentos', FolderPlus], ['termos-paciente', 'Termo', ShieldCheck], ['converse-aura', 'Aura', MessageSquare], ['financeiro', 'Financeiro', DollarSign]                     ].map(([id, label, Icon]) => <button key={id as string} className={subAbaGestao === id ? 'active' : ''} onClick={() => setSubAbaGestao(id as string)}><Icon className="w-4 h-4" />{label as string}</button>)}                   </nav>                   {patientTabsNext && <button className="patient-tabs-arrow next" onClick={() => patientTabsRef.current?.scrollBy({ left: 320, behavior: 'smooth' })} aria-label="Mostrar próximas abas"><ChevronRight /></button>}                 </div>                  {subAbaGestao === 'termos-paciente' && pacienteSelecionado && <div className="patient-tab-content patient-terms-tab"><TermsManagement patients={[{ id: pacienteSelecionado.id, nome: pacienteSelecionado.nome, email: pacienteSelecionado.email }]} patientId={pacienteSelecionado.id} embedded /></div>}                  {/* PERFIL DO PACIENTE */}                 {subAbaGestao === 'resumo' && (
+            {abaAtiva === 'aba-form' && <FormBuilder />}            {abaAtiva === 'aba-termos' && <TermsManagement patients={pacientes.map(patient => ({ id: patient.id, nome: patient.nome, email: patient.email }))} />}            {abaAtiva === 'aba-financeiro' && <ConsolidatedFinance />}            {/* ABA: PACIENTES & ONBOARDING */}           {abaAtiva === 'aba-pacientes' && (             <section className="tab-panel active reveal-element">               <div className="pacientes-section">                                  <div className="section-header">                   <div>                     <h2 className="text-xl font-bold tracking-tight">Pacientes — Gestão</h2>                     <p className="text-sm text-gray-500">Visão de consultório: acompanhe cada paciente, próximas consultas e status clínico.</p>                   </div>                   <div className="flex items-center gap-2">                     <button onClick={() => carregarPacientes()} className="btn-action px-3 py-2 text-xs flex items-center gap-1.5" title="Sincronizar lista de pacientes">                       <RefreshCw className="w-3.5 h-3.5" />                       Sincronizar                     </button>                     <button onClick={() => { setEditandoCadastroPaciente(false); setModalNovoPacienteAtivo(true); }} className="btn-primary w-auto px-5 py-2.5 text-xs flex items-center gap-1.5 shadow-sm bg-indigo-950">                       <Plus className="w-4 h-4" />                       Novo Paciente                     </button>                   </div>                 </div>                  <div className="flex gap-4 items-center mt-4">                   <div className="relative flex-1 max-w-[320px]">                     <Search className="w-4 h-4 text-gray-400 absolute left-3 top-3" />                     <input                        type="text"                        className="form-control pl-9 text-xs py-2"                        placeholder="Buscar por nome ou iniciais..."                        value={buscaPacienteQuery}                       onChange={(e) => setBuscaPacienteQuery(e.target.value)}                     />                   </div>                   <select className="form-control text-xs py-2 w-auto" style={{ width: '120px' }} value={filtroPacienteStatus} onChange={e => setFiltroPacienteStatus(e.target.value as any)}>
+                    <option value="ativos">Ativos</option>
+                    <option value="inativos">Inativos</option>
+                    <option value="todos">Todos</option>
+                  </select>                 </div>                  <div className="pacientes-grid-cards mt-6">                   {pacientesFiltrados.map(p => (                     <div key={p.id} className="paciente-card-gestao card-glass">                       <div>                         <div className="paciente-card-header">                           <div className="paciente-card-info">                             <div className="paciente-card-iniciais">                               {p.iniciais || p.nome.substring(0, 2).toUpperCase()}                             </div>                             <div>                               <h4 className="paciente-card-nome">{p.nome}</h4>                               <span className="paciente-card-sub">{p.escolaridade || 'F90 - F21'}</span>                             </div>                           </div>                           <span className={`badge ${p.status === 'ativo' ? 'badge-ativo' : 'badge-onboarding'} text-[9px] px-2 py-0.5 rounded-full font-bold`}>                             {p.status}                           </span>                         </div>                          <div className="paciente-card-divider" />                          <div className="paciente-card-boxes">                           <div className="paciente-card-box">                             <span className="title">Última Consulta</span>                             <span className="val">23/07/2026</span>                           </div>                           <div className="paciente-card-box">                             <span className="title">Próxima</span>                             <span className="val text-gray-400 font-bold">A agendar</span>                           </div>                         </div>                       </div>                        <div className="flex justify-between items-center mt-2 pt-2 border-t border-gray-50 dark:border-gray-900">                         <button                            onClick={() => {                             setPacienteSelecionado(p);                             setAbaAtiva('aba-gestao-paciente');                           }}                            className="paciente-card-link text-xs flex items-center gap-1.5"                         >                           <Eye className="w-3.5 h-3.5 text-gray-400" />                           Prontuário clínico                         </button>                                                  {p.status === 'onboarding' && (                           <button onClick={() => copiarLinkQuiz(p.onboarding_token)} className="btn-action text-[10px] py-1 px-2.5">                             Copiar Link                           </button>                         )}                       </div>                     </div>                   ))}                   {pacientesFiltrados.length === 0 && (                     <div className="col-span-full text-center py-10 bg-white dark:bg-gray-900/10 border border-gray-100 dark:border-gray-800 rounded-md">                       <p className="text-xs text-gray-400">Nenhum paciente encontrado com esta busca.</p>                     </div>                   )}                 </div>                </div>             </section>           )}            {/* ABA: GESTÃO DO PACIENTE */}           {abaAtiva === 'aba-gestao-paciente' && (             <section className="gestao-paciente-container active reveal-element">                              <aside className="patient-roster">
+                <div className="patient-roster-actions">
+                  <div className="flex items-center gap-2">
+                    <button onClick={() => { setEditandoCadastroPaciente(false); setModalNovoPacienteAtivo(true); }} className="btn-primary flex-1"><Plus className="w-4 h-4" /> Nova pessoa</button>
+                    <button onClick={() => carregarPacientes()} className="btn-action px-2.5 py-2" title="Sincronizar pacientes"><RefreshCw className="w-3.5 h-3.5" /></button>
+                  </div>
+                  <div className="patient-roster-filter-tabs">
+                    <button type="button" className={filtroPacienteStatus === "ativos" ? "active" : ""} onClick={() => setFiltroPacienteStatus("ativos")}>
+                      Ativos <span className="badge-count">{pacientes.filter(p => p.status !== "inativo").length}</span>
+                    </button>
+                    <button type="button" className={filtroPacienteStatus === "inativos" ? "active" : ""} onClick={() => setFiltroPacienteStatus("inativos")}>
+                      Inativos <span className="badge-count">{pacientes.filter(p => p.status === "inativo").length}</span>
+                    </button>
+                    <button type="button" className={filtroPacienteStatus === "todos" ? "active" : ""} onClick={() => setFiltroPacienteStatus("todos")}>
+                      Todos <span className="badge-count">{pacientes.length}</span>
+                    </button>
+                  </div>
+                </div>
+                <label className="patient-roster-search"><Search className="w-4 h-4" /><input value={buscaPacienteQuery} onChange={e => setBuscaPacienteQuery(e.target.value)} placeholder="Buscar por nome ou CPF..." /></label>
+                <div className="patient-roster-meta"><span>{pacientesFiltrados.length} resultados</span><strong>Total: {pacientes.length}</strong></div>
+                <div className="patient-roster-list">
+                  {pacientesFiltrados.map(paciente => (
+                    <button key={paciente.id} className={`patient-roster-item ${pacienteSelecionado?.id === paciente.id ? "active" : ""} ${paciente.status === "inativo" ? "opacity-60" : ""}`} onClick={() => { setPacienteSelecionado(paciente); setSubAbaGestao("resumo"); }}>
+                      <span className="patient-roster-avatar">{paciente.iniciais || paciente.nome.split(" ").map(n => n[0]).join("").slice(0, 2)}</span>
+                      <span className="patient-roster-copy">
+                        <strong>{paciente.nome}</strong>
+                        {paciente.status === "inativo" && <small className="text-amber-600 dark:text-amber-400 font-semibold">Inativo</small>}
+                      </span>
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  ))}
+                  {pacientesFiltrados.length === 0 && (
+                    <div className="p-4 text-center text-xs text-gray-400">
+                      Nenhum paciente {filtroPacienteStatus === "inativos" ? "inativo" : "encontrado"}.
+                    </div>
+                  )}
+                </div>
+              </aside>                {/* Área Principal de Prontuário Clínico (Direita) */}               <div className="flex flex-col gap-6">                  <header className="patient-central-header">                   <div className="patient-central-identity">                     <span className="patient-central-avatar">{pacienteSelecionado?.iniciais || pacienteSelecionado?.nome.split(' ').map(n => n[0]).join('').slice(0, 2) || 'PS'}</span>                     <div><h2>{pacienteSelecionado?.nome || 'Selecione um paciente'}</h2></div>                   </div>                   <div className="patient-central-actions">
+                    {pacienteSelecionado && <PatientPdfSummaryButton patient={pacienteSelecionado} />}
+                    <button className="btn-action"><MessageSquare className="w-4 h-4" /> WhatsApp</button>
+                    {pacienteSelecionado && (
+                      <button
+                        onClick={() => handleAlternarStatusPaciente(pacienteSelecionado)}
+                        className={`btn-action text-xs flex items-center gap-1.5 ${pacienteSelecionado.status === "inativo" ? "!border-emerald-500 !text-emerald-600 dark:!text-emerald-400" : "!border-amber-400 !text-amber-700 dark:!text-amber-400"}`}
+                        title={pacienteSelecionado.status === "inativo" ? "Reativar este paciente" : "Inativar este paciente"}
+                      >
+                        {pacienteSelecionado.status === "inativo" ? <><UserCheck className="w-3.5 h-3.5" /> Reativar</> : <><UserX className="w-3.5 h-3.5" /> Inativar</>}
+                      </button>
+                    )}
+                    <button onClick={() => { setEditandoCadastroPaciente(true); setModalNovoPacienteAtivo(true); }} className="btn-primary w-auto px-4 py-2 text-xs"><Pencil className="w-4 h-4" /> Editar</button>
+                  </div>                 </header>                  <div className={`patient-tabs-shell ${!patientTabsPrevious && !patientTabsNext ? 'no-arrows' : !patientTabsPrevious ? 'only-next' : !patientTabsNext ? 'only-previous' : ''}`}>
+                   {patientTabsPrevious && <button className="patient-tabs-arrow previous" onClick={() => patientTabsRef.current?.scrollBy({ left: -320, behavior: 'smooth' })} aria-label="Mostrar abas anteriores"><ChevronLeft /></button>}
+                   <nav ref={patientTabsRef} className="patient-central-tabs" aria-label="Central do paciente">
+                     {[
+                       ['resumo', 'Identificação', BookOpen],
+                       ['respostas-form', 'Respostas do Formulário', ClipboardList],
+                       ['neuroavaliacao', 'Avaliação PSI', Brain],
+                       ['evolucao', 'Sessões', TrendingUp],
+                       ['estudo-caso-formula', 'Estudo de caso', Sliders],
+                       ['reabilitacao', 'Reabilitação', Activity],
+                       ['medicacoes', 'Resumo Clínico', Pill],
+                       ['documentos', 'Documentos', FolderPlus],
+                       ['termos-paciente', 'Termo', ShieldCheck],
+                       ['converse-aura', 'Aura', MessageSquare],
+                       ['financeiro', 'Financeiro', DollarSign]
+                     ].map(([id, label, Icon]) => (
+                       <button
+                         key={id as string}
+                         className={subAbaGestao === id ? 'active' : ''}
+                         onClick={() => setSubAbaGestao(id as string)}
+                       >
+                         <Icon className="w-4 h-4" />
+                         {label as string}
+                         {id === 'respostas-form' && (centralData.respostas_formulario?.length || 0) > 0 && (
+                           <span className="ml-1.5 px-1.5 py-0.5 text-[10px] rounded-full bg-indigo-100 text-indigo-700 dark:bg-indigo-900/60 dark:text-indigo-300 font-bold">
+                             {centralData.respostas_formulario.length}
+                           </span>
+                         )}
+                       </button>
+                     ))}
+                   </nav>
+                   {patientTabsNext && <button className="patient-tabs-arrow next" onClick={() => patientTabsRef.current?.scrollBy({ left: 320, behavior: 'smooth' })} aria-label="Mostrar próximas abas"><ChevronRight /></button>}
+                 </div>                  {subAbaGestao === 'termos-paciente' && pacienteSelecionado && <div className="patient-tab-content patient-terms-tab"><TermsManagement patients={[{ id: pacienteSelecionado.id, nome: pacienteSelecionado.nome, email: pacienteSelecionado.email }]} patientId={pacienteSelecionado.id} embedded /></div>}                  {/* PERFIL DO PACIENTE */}                 {subAbaGestao === 'resumo' && (
                   !pacienteSelecionado ? (
                     <div className="tail-card text-center py-20 flex flex-col items-center justify-center gap-3">
                       <div className="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center mb-1">
@@ -1853,6 +1984,118 @@ import { AgendaView } from '@/components/agenda-view';
                      </section>
                     </div>
                   )
+                )}
+
+                {/* RESPOSTAS DO FORMULÁRIO */}
+                {subAbaGestao === 'respostas-form' && (
+                  <div className="patient-tab-content reveal-element flex flex-col gap-6">
+                    <div className="patient-section-title">
+                      <div>
+                        <span className="eyebrow">Triagem e cadastro prévio</span>
+                        <h3>Respostas do Formulário</h3>
+                        <p>Consulte as respostas enviadas pelo paciente através dos formulários públicos da clínica.</p>
+                      </div>
+                      {centralData.respostas_formulario && centralData.respostas_formulario.length > 0 && (
+                        <button
+                          type="button"
+                          className="btn-action btn-compact flex items-center gap-1.5"
+                          onClick={() => {
+                            const textToCopy = (centralData.respostas_formulario || []).map(form => {
+                              const header = `--- ${form.form_titulo} (${new Date(form.data_envio).toLocaleDateString('pt-BR')}) ---\n`;
+                              const body = form.respostas.map(r => `• ${r.pergunta}\nR: ${r.resposta}`).join('\n\n');
+                              return header + body;
+                            }).join('\n\n====================\n\n');
+                            navigator.clipboard.writeText(textToCopy);
+                            triggerToast('Respostas copiadas para a área de transferência!');
+                          }}
+                        >
+                          <Copy className="w-4 h-4" />
+                          Copiar respostas
+                        </button>
+                      )}
+                    </div>
+
+                    {(!centralData.respostas_formulario || centralData.respostas_formulario.length === 0) ? (
+                      <div className="patient-empty panel-card card-glass py-12 text-center flex flex-col items-center justify-center gap-3">
+                        <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center">
+                          <ClipboardList className="w-6 h-6 text-accent" />
+                        </div>
+                        <strong>Nenhuma resposta de formulário registrada</strong>
+                        <p className="text-xs text-slate-500 dark:text-slate-400 max-w-md">
+                          Este paciente ainda não enviou respostas através de nenhum formulário público. Você pode compartilhar o link do formulário prévio para coleta antecipada de dados.
+                        </p>
+                        <button
+                          type="button"
+                          className="btn-primary btn-compact mt-2 flex items-center gap-1.5"
+                          onClick={() => {
+                            const origin = typeof window !== 'undefined' ? window.location.origin : '';
+                            const formUrl = `${origin}/pripsico/entrevista-preliminar`;
+                            navigator.clipboard.writeText(formUrl);
+                            triggerToast('Link do formulário copiado!');
+                          }}
+                        >
+                          <Copy className="w-3.5 h-3.5" />
+                          Copiar link do formulário
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col gap-5">
+                        {centralData.respostas_formulario.map((formEntry, fIdx) => (
+                          <article key={formEntry.id || fIdx} className="panel-card card-glass border border-slate-200/80 dark:border-slate-800 rounded-xl p-6 shadow-sm">
+                            <header className="flex flex-wrap justify-between items-center gap-3 pb-4 mb-5 border-b border-slate-100 dark:border-slate-800">
+                              <div className="flex items-center gap-3">
+                                <div className="w-9 h-9 rounded-lg bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+                                  <FileText className="w-5 h-5" />
+                                </div>
+                                <div>
+                                  <h4 className="font-bold text-sm text-slate-800 dark:text-slate-100">{formEntry.form_titulo || 'Formulário respondido'}</h4>
+                                  <span className="text-[11px] text-slate-400">
+                                    Enviado em {new Date(formEntry.data_envio).toLocaleString('pt-BR')} · /{formEntry.form_slug}
+                                  </span>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span className="badge badge-ativo text-[10px] px-2.5 py-0.5 rounded-full font-medium">
+                                  {formEntry.respostas.length} pergunta(s) respondida(s)
+                                </span>
+                                <button
+                                  type="button"
+                                  className="btn-action btn-compact text-xs py-1 px-2.5 flex items-center gap-1"
+                                  onClick={() => {
+                                    const text = formEntry.respostas.map(r => `• ${r.pergunta}\nR: ${r.resposta}`).join('\n\n');
+                                    navigator.clipboard.writeText(text);
+                                    triggerToast('Respostas deste formulário copiadas!');
+                                  }}
+                                  title="Copiar respostas deste formulário"
+                                >
+                                  <Copy className="w-3.5 h-3.5" />
+                                  Copiar
+                                </button>
+                              </div>
+                            </header>
+
+                            <div className="flex flex-col gap-4">
+                              {formEntry.respostas.map((r, rIdx) => (
+                                <div key={r.id_pergunta || rIdx} className="p-4 rounded-lg bg-slate-50/70 dark:bg-slate-900/40 border border-slate-100 dark:border-slate-800/80 flex flex-col gap-2">
+                                  <div className="flex items-center gap-2">
+                                    <span className="w-5 h-5 rounded-full bg-slate-200 dark:bg-slate-800 text-[10px] font-bold flex items-center justify-center text-slate-600 dark:text-slate-400">
+                                      {String(rIdx + 1).padStart(2, '0')}
+                                    </span>
+                                    <strong className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                                      {r.pergunta}
+                                    </strong>
+                                  </div>
+                                  <div className="pl-7 text-xs text-slate-800 dark:text-slate-200 whitespace-pre-wrap leading-relaxed font-normal">
+                                    {r.resposta || <span className="text-slate-400 italic">Não respondido</span>}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </article>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 )}
  
                  {/* ARQUIVO DE SESSÕES */}

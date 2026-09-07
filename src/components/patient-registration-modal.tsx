@@ -20,7 +20,7 @@ const emptyForm = {
   emergencia1_telefone: '', emergencia2_nome: '', emergencia2_parentesco: '', emergencia2_telefone: '',
   pais: '', cep: '', numero: '', rua: '', bairro: '', cidade: '', complemento: '', genero: '',
   estado_civil: '', profissao: '', plano_saude: '', tratamentos: '', medicamento: '', cobranca: '',
-  moeda: '', valor: '', pagamento: ''
+  moeda: '', valor: '', pagamento: '', status: 'ativo'
 };
 
 function initials(name: string) {
@@ -53,7 +53,8 @@ export function PatientRegistrationModal({ open, onClose, onCreated, patient }: 
       rua: patient.endereco?.rua || '', bairro: patient.endereco?.bairro || '', cidade: patient.endereco?.cidade || '', complemento: patient.endereco?.complemento || '',
       genero: patient.genero || '', estado_civil: patient.estado_civil || '', profissao: patient.profissao || '', plano_saude: patient.plano_saude || '',
       tratamentos: patient.tratamentos || '', medicamento: patient.medicamento || '', cobranca: patient.cobranca?.tipo || 'Por sessão',
-      moeda: patient.cobranca?.moeda || 'BRL', valor: patient.cobranca?.valor || '100,00', pagamento: patient.cobranca?.meio_pagamento || 'PIX'
+      moeda: patient.cobranca?.moeda || 'BRL', valor: patient.cobranca?.valor || '100,00', pagamento: patient.cobranca?.meio_pagamento || 'PIX',
+      status: patient.status || 'ativo'
     });
   }, [open, patient]);
 
@@ -108,7 +109,7 @@ export function PatientRegistrationModal({ open, onClose, onCreated, patient }: 
     }
     if (!form.nome.trim()) return setError('Informe o nome do paciente.');
     return create({
-      nome: form.nome, iniciais: initials(form.nome), status: 'ativo', nome_social: form.nome_social,
+      nome: form.nome, iniciais: initials(form.nome), status: form.status || 'ativo', nome_social: form.nome_social,
       raca_cor: form.raca_cor, cpf: form.cpf, data_nascimento: form.data_nascimento, email: form.email,
       telefone: form.telefone, tipo_atendimento: form.tipo_atendimento, responsavel_nome: form.responsavel_financeiro,
       contato_emergencia: [form.emergencia1_nome, form.emergencia1_parentesco, form.emergencia1_telefone].filter(Boolean).join(' · '),
@@ -166,6 +167,7 @@ export function PatientRegistrationModal({ open, onClose, onCreated, patient }: 
                     {field('E-mail', 'email', 'paciente@email.com', 'email')}
                     {field('Telefone / WhatsApp', 'telefone', '+55 (00) 00000-0000', 'tel')}
                     <label><span>Tipo de atendimento</span><select value={form.tipo_atendimento} onChange={e => set('tipo_atendimento', e.target.value)}><option>Adulto</option><option>Infantil</option><option>Adolescente</option><option>Idoso</option></select></label>
+                    <label><span>Situação do paciente</span><select value={form.status} onChange={e => set('status', e.target.value)}><option value="ativo">Ativo</option><option value="inativo">Inativo</option></select></label>
                   </div>
                 </section>
                 <section>
