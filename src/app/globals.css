@@ -3228,7 +3228,24 @@ body:has(.online-room-overlay), body:has(.patient-summary-overlay) { overflow: h
 }
 .patient-session-button { color: var(--primary, #73CBD2); border-color: color-mix(in srgb, var(--primary, #73CBD2) 28%, #ddd) !important; background: color-mix(in srgb, var(--primary, #73CBD2) 6%, #fff) !important; }
 .patient-session-button:hover { color: #fff; background: var(--primary, #73CBD2) !important; }
-@media (max-width: 720px) { .patient-central-actions { flex-wrap: wrap; justify-content: flex-end; } .patient-session-button { order: -1; } }
+@media (max-width: 720px) {
+  .patient-central-actions {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 8px !important;
+    width: 100% !important;
+    margin-top: 8px !important;
+  }
+  .patient-central-actions > * {
+    flex: 1 1 calc(50% - 8px) !important;
+    min-width: 120px !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+  .patient-session-button { order: -1; }
+}
 
 /* Agenda clínica: navegação semanal e filtros integrados */
 .agenda-page-heading { margin-bottom: 0; }
@@ -5131,13 +5148,14 @@ body.dark-theme .system-ai-message.is-ai > div {
     flex: none !important;
     flex-direction: row !important;
     align-items: center !important;
-    justify-content: flex-start !important;
-    gap: 4px !important;
+    justify-content: center !important;
+    gap: 6px !important;
     padding: 6px 8px !important;
     overflow-x: auto !important;
     overflow-y: hidden !important;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
+    width: 100% !important;
   }
   .sidebar .sidebar-body::-webkit-scrollbar,
   .sidebar.collapsed .sidebar-body::-webkit-scrollbar {
@@ -5147,7 +5165,8 @@ body.dark-theme .system-ai-message.is-ai > div {
   .sidebar .menu-group {
     flex-direction: row !important;
     align-items: center !important;
-    gap: 4px !important;
+    justify-content: center !important;
+    gap: 6px !important;
     flex-shrink: 0;
   }
 
@@ -5261,6 +5280,20 @@ body.dark-theme .system-ai-message.is-ai > div {
 
   .patient-roster {
     min-height: auto !important;
+  }
+
+  .patient-central-header {
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    gap: 12px !important;
+  }
+
+  .patient-central-identity {
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
   }
 }
 

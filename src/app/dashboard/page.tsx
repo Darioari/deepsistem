@@ -187,7 +187,17 @@ const centralPacienteVazio = (): CentralPacienteData => ({
    onend: (() => void) | null;
  }
  type SpeechRecognitionConstructor = new () => SpeechRecognitionLike;  type ProfessionalPlan = 'start' | 'pro';  export default function DashboardPage() {   const router = useRouter();
-   const [abaAtiva, setAbaAtiva] = useState('aba-painel');    const [configuracoesSecao, setConfiguracoesSecao] = useState<SettingsSection>('perfil');   const [sidebarMinimizada, setSidebarMinimizada] = useState(true);
+    const [abaAtiva, setAbaAtiva] = useState(() => {
+      if (typeof window !== 'undefined') {
+        const params = new URLSearchParams(window.location.search);
+        const tabParam = params.get('tab');
+        if (tabParam) return tabParam;
+        const savedTab = localStorage.getItem('deepsistem_active_tab');
+        if (savedTab) return savedTab;
+      }
+      return 'aba-painel';
+    });
+    const [configuracoesSecao, setConfiguracoesSecao] = useState<SettingsSection>('perfil');   const [sidebarMinimizada, setSidebarMinimizada] = useState(true);
    const [temaEscuro, setTemaEscuro] = useState(false);
    const [menuPerfilAberto, setMenuPerfilAberto] = useState(false);   const [tourAberto, setTourAberto] = useState(false);   const [plano, setPlano] = useState<ProfessionalPlan>('start');   const [planoCarregado, setPlanoCarregado] = useState(false);   const isPro = plano === 'pro'; 
    // Estados de Toast e Notificações
@@ -219,8 +229,36 @@ const centralPacienteVazio = (): CentralPacienteData => ({
    // ----------------------------------------------------
    // GESTÃO DO PACIENTE (SIDEBAR INTERNA DO PACIENTE STATE)
    // ----------------------------------------------------
-   const [subAbaGestao, setSubAbaGestao] = useState('resumo');
-   const [pacienteSelecionado, setPacienteSelecionado] = useState<Paciente | null>(null);
+   const [subAbaGestao, setSubAbaGestao] = useState(() => {
+     if (typeof window !== 'undefined') {
+       const params = new URLSearchParams(window.location.search);
+       const subtabParam = params.get('subtab');
+       if (subtabParam) return subtabParam;
+       const savedSubtab = localStorage.getItem('deepsistem_active_subtab');
+       if (savedSubtab) return savedSubtab;
+     }
+     return 'resumo';
+   });
+   const [pacienteSelecionado, setPacienteSelecionado] = useState<Paciente | null>(() => {
+     if (typeof window !== 'undefined') {
+       try {
+         const params = new URLSearchParams(window.location.search);
+         const patientId = params.get('patientId') || localStorage.getItem('deepsistem_active_patient_id');
+         const cached = localStorage.getItem('deepsistem_cached_patients');
+         if (cached) {
+           const parsed = JSON.parse(cached);
+           if (Array.isArray(parsed) && parsed.length > 0) {
+             if (patientId) {
+               const found = parsed.find((p: Paciente) => p.id === patientId);
+               if (found) return found;
+             }
+             return parsed[0];
+           }
+         }
+       } catch {}
+     }
+     return null;
+   });
    
    // Prontuário e Aura IA (Fica sob Sub-Aba Resumo Clínico)
    const [gravando, setGravando] = useState(false);
@@ -576,19 +614,50 @@ const centralPacienteVazio = (): CentralPacienteData => ({
    useEffect(() => () => auraRecognitionRef.current?.stop(), []);
  
    useEffect(() => {
-     const tabs = patientTabsRef.current;
-     if (!tabs || abaAtiva !== 'aba-gestao-paciente') return;
-     const atualizarSetas = () => {
-       const overflow = tabs.scrollWidth > tabs.clientWidth + 2;
-       setPatientTabsPrevious(overflow && tabs.scrollLeft > 2);
-       setPatientTabsNext(overflow && tabs.scrollLeft + tabs.clientWidth < tabs.scrollWidth - 2);
-     };
-     const observer = new ResizeObserver(atualizarSetas);
-     observer.observe(tabs);
-     tabs.addEventListener('scroll', atualizarSetas, { passive: true });
-     const frame = requestAnimationFrame(atualizarSetas);
-     return () => { cancelAnimationFrame(frame); observer.disconnect(); tabs.removeEventListener('scroll', atualizarSetas); };
-   }, [abaAtiva]);
+      const tabs = patientTabsRef.current;
+      if (!tabs || abaAtiva !== 'aba-gestao-paciente') return;
+      const atualizarSetas = () => {
+        const overflow = tabs.scrollWidth > tabs.clientWidth + 2;
+        setPatientTabsPrevious(overflow && tabs.scrollLeft > 2);
+        setPatientTabsNext(overflow && tabs.scrollLeft + tabs.clientWidth < tabs.scrollWidth - 2);
+      };
+      const observer = new ResizeObserver(atualizarSetas);
+      observer.observe(tabs);
+      tabs.addEventListener('scroll', atualizarSetas, { passive: true });
+      const frame = requestAnimationFrame(atualizarSetas);
+      return () => { cancelAnimationFrame(frame); observer.disconnect(); tabs.removeEventListener('scroll', atualizarSetas); };
+    }, [abaAtiva]);
+
+    // Persistir aba, sub-aba e paciente ativo para manter o estado exato ao recarregar a página
+    useEffect(() => {
+      if (typeof window === 'undefined') return;
+      try {
+        localStorage.setItem('deepsistem_active_tab', abaAtiva);
+        if (abaAtiva === 'aba-gestao-paciente') {
+          localStorage.setItem('deepsistem_active_subtab', subAbaGestao);
+          if (pacienteSelecionado?.id) {
+            localStorage.setItem('deepsistem_active_patient_id', pacienteSelecionado.id);
+          }
+        }
+
+        const url = new URL(window.location.href);
+        url.searchParams.set('tab', abaAtiva);
+        if (abaAtiva === 'aba-gestao-paciente') {
+          url.searchParams.set('subtab', subAbaGestao);
+          if (pacienteSelecionado?.id) {
+            url.searchParams.set('patientId', pacienteSelecionado.id);
+          } else {
+            url.searchParams.delete('patientId');
+          }
+        } else {
+          url.searchParams.delete('subtab');
+          url.searchParams.delete('patientId');
+        }
+        window.history.replaceState(null, '', url.toString());
+      } catch (e) {
+        console.error('Falha ao sincronizar estado na URL:', e);
+      }
+    }, [abaAtiva, subAbaGestao, pacienteSelecionado?.id]);
  
    // ----------------------------------------------------
    // CHAMADAS DE API
@@ -692,6 +761,13 @@ const centralPacienteVazio = (): CentralPacienteData => ({
           setPacienteSelecionado(prev => {
             if (prev && data.some((p: Paciente) => p.id === prev.id)) {
               return data.find((p: Paciente) => p.id === prev.id) || data[0];
+            }
+            if (typeof window !== 'undefined') {
+              const params = new URLSearchParams(window.location.search);
+              const requestedId = params.get('patientId') || localStorage.getItem('deepsistem_active_patient_id');
+              if (requestedId && data.some((p: Paciente) => p.id === requestedId)) {
+                return data.find((p: Paciente) => p.id === requestedId) || data[0];
+              }
             }
             return data[0];
           });
