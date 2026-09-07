@@ -4,6 +4,7 @@ import fs from 'fs';
 import path from 'path';
 import { addAcceptances, getAcceptances, getTerms, readInvite, consumeInvite } from '@/lib/care-terms';
 import { postgresEnabled, withTenantDatabase } from '@/lib/postgres';
+import { getTenantCustomLogo } from '@/lib/tenant-brand-server';
 
 const PATIENTS_FILE = path.join(process.cwd(), 'backend', 'data', 'pacientes.json');
 function tokenHash(token: string) { return createHash('sha256').update(token).digest('hex'); }
@@ -16,7 +17,8 @@ export async function GET(_request: Request, context: { params: Promise<{ token:
   const patient = await getPatient(invite.patient_id, invite.tenant_id);
   if (!patient) return NextResponse.json({ error: 'Paciente não encontrado.' }, { status: 404 });
   const terms = (await getTerms(invite.tenant_id)).filter(item => invite.term_ids.includes(item.id));
-  return NextResponse.json({ tenantId: invite.tenant_id, patientName: String(patient.nome || 'pessoa atendida'), terms, expiresAt: invite.expires_at, acceptedTermIds: (await getAcceptances(invite.tenant_id, invite.patient_id)).map(item => item.term_id) });
+  const logotipoUrl = getTenantCustomLogo(invite.tenant_id);
+  return NextResponse.json({ tenantId: invite.tenant_id, patientName: String(patient.nome || 'pessoa atendida'), terms, expiresAt: invite.expires_at, acceptedTermIds: (await getAcceptances(invite.tenant_id, invite.patient_id)).map(item => item.term_id), logotipoUrl });
 }
 
 export async function POST(request: Request, context: { params: Promise<{ token: string }> }) {

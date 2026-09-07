@@ -16,6 +16,7 @@ export default function AcceptTermPage({ params }: { params: Promise<{ token: st
   const [signerName, setSignerName] = useState('');
   const [relationship, setRelationship] = useState('Pessoa atendida');
   const [accepted, setAccepted] = useState<string[]>([]);
+  const [customLogoUrl, setCustomLogoUrl] = useState<string>('');
   const [state, setState] = useState<PageState>('loading');
   const [error, setError] = useState('');
 
@@ -32,8 +33,15 @@ export default function AcceptTermPage({ params }: { params: Promise<{ token: st
         setPatientName(data.patientName || '');
         setSignerName(data.patientName || '');
         setAccepted(data.acceptedTermIds || []);
+        if (data.logotipoUrl) setCustomLogoUrl(data.logotipoUrl);
         const brandResponse = await fetch(`/api/brand/settings?tenant=${encodeURIComponent(data.tenantId || 'pripsico')}`);
-        if (brandResponse.ok) applyBrandSettings(await brandResponse.json());
+        if (brandResponse.ok) {
+          const brandData = await brandResponse.json();
+          applyBrandSettings(brandData);
+          if (brandData?.logotipo_url && !brandData.logotipo_url.includes('platform-logo')) {
+            setCustomLogoUrl(brandData.logotipo_url);
+          }
+        }
         setState('ready');
       })
       .catch(cause => {
@@ -61,7 +69,7 @@ export default function AcceptTermPage({ params }: { params: Promise<{ token: st
   return (
     <main className="public-term-page">
       <header>
-        <BrandLogo />
+        <BrandLogo customLogoUrl={customLogoUrl || undefined} />
         <span>Consentimento digital seguro</span>
       </header>
       <section className="public-term-card">

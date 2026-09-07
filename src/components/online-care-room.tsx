@@ -120,6 +120,13 @@ export function OnlineCareRoom({
   const ignoreOffer = useRef(false);
   const turnConfigured = useRef(false);
   const turnFallbackTimer = useRef<number | null>(null);
+  const presenceTimer = useRef<number | null>(null);
+  const reconnectTimer = useRef<number | null>(null);
+  const reconnectInFlight = useRef(false);
+  const reconnectAttempts = useRef(0);
+  const roomActive = useRef(false);
+  const connectedRef = useRef(false);
+  const intentionalClose = useRef(false);
   const isPolite = role === 'patient';
   const transcriber = useRef<RealtimeBrowserTranscriber | null>(null);
   const textRef = useRef('');
@@ -211,6 +218,32 @@ export function OnlineCareRoom({
       window.clearTimeout(turnFallbackTimer.current);
       turnFallbackTimer.current = null;
     }
+  }
+
+  function clearPresenceTimer() {
+    if (presenceTimer.current !== null) {
+      window.clearTimeout(presenceTimer.current);
+      presenceTimer.current = null;
+    }
+  }
+
+  function clearReconnectTimer() {
+    if (reconnectTimer.current !== null) {
+      window.clearTimeout(reconnectTimer.current);
+      reconnectTimer.current = null;
+    }
+  }
+
+  function schedulePresenceChecks() {
+    if (role !== 'professional' || presenceTimer.current !== null || connectedRef.current) return;
+    presenceTimer.current = window.setTimeout(() => {
+      presenceTimer.current = null;
+      if (!roomActive.current || connectedRef.current) return;
+      if (signalingReady.current && socket.current?.readyState === WebSocket.OPEN) {
+        socket.current.send(JSON.stringify({ action: 'presence' }));
+      }
+      schedulePresenceChecks();
+    }, 1500);
   }
 
   function scheduleTurnFallback() {
@@ -316,7 +349,26 @@ export function OnlineCareRoom({
     }
   }
 
-  async function connectSignaling() {
+  function scheduleSignalingReconnect() {
+    if (!roomActive.current || intentionalClose.current || reconnectTimer.current !== null || reconnectInFlight.current) return;
+    const delay = Math.min(1000 * (2 ** Math.min(reconnectAttempts.current, 3)), 8000);
+    reconnectTimer.current = window.setTimeout(() => {
+      reconnectTimer.current = null;
+      reconnectInFlight.current = true;
+      signalingReady.current = false;
+      void connectSignaling(true).then(() => {
+        reconnectAttempts.current = 0;
+        setError('');
+      }).catch(() => {
+        reconnectAttempts.current += 1;
+        scheduleSignalingReconnect();
+      }).finally(() => {
+        reconnectInFlight.current = false;
+      });
+    }, delay);
+  }
+
+  async function connectSignaling(reconnecting = false) {
     const current = new WebSocket(signalingUrl());
     socket.current = current;
     let settled = false;
@@ -345,8 +397,10 @@ export function OnlineCareRoom({
               for (const payload of queued) signal(payload);
               resolveOnce(resolve);
               if (role === 'professional' && Number(incoming.participants) > 1) {
+                if (reconnecting) makingOffer.current = false;
                 void createProfessionalOffer();
               }
+              schedulePresenceChecks();
               return;
             }
             if (incoming.action === 'signal' && incoming.payload) await handleSignal(incoming.payload);
@@ -358,8 +412,12 @@ export function OnlineCareRoom({
                   void createProfessionalOffer(true);
                 }
               } else if (incoming.status === 'participant-left') {
+                connectedRef.current = false;
                 setConnected(false);
               }
+            }
+            if (incoming.action === 'presence' && role === 'professional' && Number(incoming.participants) > 1) {
+              void createProfessionalOffer();
             }
           } catch {
             setError('A sinalização da sala recebeu uma mensagem inválida.');
@@ -375,12 +433,22 @@ export function OnlineCareRoom({
       };
     });
     current.onclose = () => {
-      if (joined) setError('A conexão com a sala foi encerrada.');
+      signalingReady.current = false;
+      if (roomActive.current && !intentionalClose.current) {
+        setError('Conexão interrompida. Reconectando a sala...');
+        scheduleSignalingReconnect();
+      }
     };
   }
 
   async function setup() {
     setError('');
+    intentionalClose.current = false;
+    roomActive.current = false;
+    connectedRef.current = false;
+    reconnectAttempts.current = 0;
+    clearPresenceTimer();
+    clearReconnectTimer();
     signalingReady.current = false;
     pendingCandidates.current = [];
     pendingSignals.current = [];
@@ -421,6 +489,8 @@ export function OnlineCareRoom({
           remoteVideo.current.srcObject = rStream;
           remoteVideo.current.play().catch(() => undefined);
         }
+        connectedRef.current = true;
+        clearPresenceTimer();
         setConnected(true);
         if (role === 'professional' && transcription === 'full') startRecording(rStream);
       };
@@ -433,11 +503,17 @@ export function OnlineCareRoom({
         else if (current.iceConnectionState === 'checking') scheduleTurnFallback();
       };
       current.onconnectionstatechange = () => {
-        setConnected(current.connectionState === 'connected');
-        if (current.connectionState === 'connected') clearTurnFallbackTimer();
+        const isConnected = current.connectionState === 'connected';
+        connectedRef.current = isConnected;
+        setConnected(isConnected);
+        if (isConnected) {
+          clearTurnFallbackTimer();
+          clearPresenceTimer();
+        }
         else if (current.connectionState === 'failed') void requestTurnFallback();
         else if (current.connectionState === 'connecting') scheduleTurnFallback();
       };
+      roomActive.current = true;
       await connectSignaling();
       setJoined(true);
     } catch (cause) {
@@ -446,6 +522,11 @@ export function OnlineCareRoom({
       clearTurnFallbackTimer();
       pendingCandidates.current = [];
       pendingSignals.current = [];
+      signalingReady.current = false;
+      roomActive.current = false;
+      intentionalClose.current = true;
+      clearPresenceTimer();
+      clearReconnectTimer();
       sourceStream.current?.getTracks().forEach(track => track.stop());
       localStream.current?.getTracks().forEach(track => track.stop());
       peer.current?.close();
@@ -455,6 +536,10 @@ export function OnlineCareRoom({
   }
 
   useEffect(() => () => {
+    roomActive.current = false;
+    intentionalClose.current = true;
+    clearPresenceTimer();
+    clearReconnectTimer();
     socket.current?.close();
     clearTurnFallbackTimer();
     virtualBackgroundCleanup.current?.();
@@ -531,6 +616,12 @@ export function OnlineCareRoom({
   }
 
   function leave() {
+    roomActive.current = false;
+    intentionalClose.current = true;
+    connectedRef.current = false;
+    reconnectAttempts.current = 0;
+    clearPresenceTimer();
+    clearReconnectTimer();
     stopRecording();
     if (socket.current?.readyState === WebSocket.OPEN) socket.current.send(JSON.stringify({ action: 'leave' }));
     socket.current?.close();
@@ -546,6 +637,9 @@ export function OnlineCareRoom({
     sourceStream.current?.getTracks().forEach(track => track.stop());
     localStream.current?.getTracks().forEach(track => track.stop());
     peer.current?.close();
+    signalingReady.current = false;
+    pendingCandidates.current = [];
+    pendingSignals.current = [];
     setJoined(false);
     setConnected(false);
   }

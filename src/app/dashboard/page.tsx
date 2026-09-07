@@ -1534,9 +1534,9 @@ const centralPacienteVazio = (): CentralPacienteData => ({
        <aside className={`sidebar ${sidebarMinimizada ? 'collapsed' : ''}`}>
          
          <div className="sidebar-header">
-           <div className="sidebar-brand">
-             {sidebarMinimizada ? ( <BrandLogo inverse={temaEscuro} compact={true} /> ) : marca.logotipo_url ? ( <img src={marca.logotipo_url} alt="Logo" className="h-7 max-w-[120px] object-contain" /> ) : ( <BrandLogo inverse={temaEscuro} compact={false} /> )}
-           </div>
+            <div className="sidebar-brand">
+              <BrandLogo customLogoUrl={marca.logotipo_url || undefined} inverse={temaEscuro} compact={sidebarMinimizada} />
+            </div>
            <button 
              className="btn-collapse" 
              onClick={() => setSidebarMinimizada(!sidebarMinimizada)}

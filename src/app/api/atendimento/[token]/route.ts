@@ -5,6 +5,7 @@ import { forbidden, sameOriginRequest } from '@/lib/auth-session';
 import { ensureMeetingRoom, findMeetingRoom, snapshotMeetingRoom } from '@/lib/meeting-room-store';
 import { checkPlanAccess } from '@/lib/plan-access';
 import { postgresEnabled, withPublicRecord, withTenantDatabase } from '@/lib/postgres';
+import { getTenantCustomLogo } from '@/lib/tenant-brand-server';
 
 const sessionsFile = path.join(process.cwd(), 'backend', 'data', 'sessoes.json');
 const TOKEN_PATTERN = /^[a-zA-Z0-9_-]{16,128}$/;
@@ -93,7 +94,12 @@ export async function GET(_request: Request, { params }: { params: Promise<{ tok
   const { token } = await params;
   if (!validToken(token)) return NextResponse.json({ error: 'Sala não encontrada.' }, { status: 404 });
   const room = findMeetingRoom(token) || await roomFromStoredSession(token);
-  if (room) return NextResponse.json(snapshotMeetingRoom(room), { headers: { 'Cache-Control': 'no-store' } });
+  if (room) {
+    const data = snapshotMeetingRoom(room);
+    const logotipo_url = getTenantCustomLogo(room.tenant_id);
+    return NextResponse.json({ ...data, logotipo_url }, { headers: { 'Cache-Control': 'no-store' } });
+  }
+  const logotipo_url = getTenantCustomLogo('pripsico');
   return NextResponse.json({
     token,
     tenant_id: 'pripsico',
@@ -102,6 +108,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ tok
     patientName: 'Paciente',
     createdAt: new Date().toISOString(),
     status: 'waiting',
+    logotipo_url,
   }, { headers: { 'Cache-Control': 'no-store' } });
 }
 
