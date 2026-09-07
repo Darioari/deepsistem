@@ -35,8 +35,8 @@ export const SYSTEM_GUIDES: Record<string, SystemGuide> = {
     steps: [
       '**1. Iniciar nova sessão:** Clique no botão **"Nova sessão"** (ícone de calendário) para abrir o atendimento clínico do paciente.',
       '**2. Anotações salvas automaticamente:** Dentro da sessão, utilize os campos de *"Anotações da sessão"* (privadas) e *"Evolução do prontuário"*. Tudo o que você digita é **salvo automaticamente pelo sistema**.',
-      '**3. Chamada de vídeo:** Para atender online, clique no botão **"Chamada de vídeo"** para abrir a sala virtual diretamente no navegador com áudio e vídeo.',
-      '**4. Enviar link da chamada ao paciente:**\n  • **Se o paciente tiver WhatsApp cadastrado:** Clique em **"Enviar link"** (ícone do WhatsApp). O sistema abre a conversa direto no WhatsApp com o link da sala pronto na mensagem.\n  • **Se o paciente não tiver WhatsApp:** Clique em **"Copiar link do vídeo"** para copiar a URL da sala e colar onde preferir.',
+      '**3. Chamada de vídeo:** Para atender online, clique no botão **"Chamada de vídeo"** para abrir a sala virtual diretamente no navegador.',
+      '**4. Enviar link ao paciente (aparece ao iniciar a chamada):** Assim que você inicia a chamada de vídeo, os botões de compartilhamento aparecem automaticamente ao lado:\n  • **Se o paciente tiver WhatsApp cadastrado:** Clique em **"Enviar link"** (ícone do WhatsApp). O sistema abre a conversa direto no WhatsApp com o link da sala pronto na mensagem.\n  • **Se o paciente não tiver WhatsApp:** Clique em **"Copiar link do vídeo"** para copiar a URL da sala e colar onde preferir.',
       '**5. Rascunho com Aura:** Clique em **"Gerar rascunho com Aura"** para que a IA estruture uma síntese da sessão para sua conferência e revisão profissional.',
     ],
     suggestions: [

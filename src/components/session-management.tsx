@@ -59,10 +59,12 @@ export function SessionManagement({ patients, embedded = false, plan = 'start' }
   const [onlineError, setOnlineError] = useState('');
   const [copiedVideoLink, setCopiedVideoLink] = useState(false);
   const [videoLinkNotice, setVideoLinkNotice] = useState('');
+  const [startedCallSessionIds, setStartedCallSessionIds] = useState<string[]>([]);
   const [saveState, setSaveState] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const saveTimers = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
   const selected = sessions.find(item => item.id === selectedId);
   const patient = patients.find(item => item.id === selected?.patientId);
+  const isCallStarted = Boolean(selected && (startedCallSessionIds.includes(selected.id) || onlineOpen));
 
   useEffect(() => {
     let active = true;
@@ -186,6 +188,7 @@ export function SessionManagement({ patients, embedded = false, plan = 'start' }
       setOnlineError('Não foi possível gerar a sala da chamada de vídeo.');
       return;
     }
+    setStartedCallSessionIds(prev => [...new Set([...prev, selected.id])]);
     setOnlineOpen(true);
   }
   async function saveAutomaticTranscript(chunk: string) { if (!selected) return; const current = sessions.find(item=>item.id===selected.id) || selected; const next = { ...current, transcript: `${current.transcript || ''}${current.transcript ? '\n' : ''}${chunk}`, notes: `${current.notes}${current.notes ? '\n\n' : ''}[Transcrição automática]\n${chunk}`, transcriptionConsent: { acceptedAt: current.transcriptionConsent?.acceptedAt || new Date().toISOString(), purpose: 'Transcrição do atendimento online para registro clínico' } }; setSessions(items=>items.map(item=>item.id===selected.id?next:item)); await fetch('/api/sessoes',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(next)}); }
@@ -209,21 +212,25 @@ export function SessionManagement({ patients, embedded = false, plan = 'start' }
             <button className="online-care-button" onClick={openOnlineCare} title="Entrar na chamada de vídeo">
               <Video className="w-4 h-4" /> Chamada de vídeo
             </button>
-            <button
-              className={`session-video-link-button ${copiedVideoLink ? 'copied' : ''}`}
-              onClick={copyVideoLink}
-              title="Copiar link da chamada de vídeo para o paciente"
-            >
-              {copiedVideoLink ? <><Check className="w-4 h-4 text-emerald-600" /> Link copiado!</> : <><Link2 className="w-4 h-4" /> Copiar link do vídeo</>}
-            </button>
-            {Boolean(patient?.telefone && patient.telefone.replace(/\D/g, '').length >= 10) && (
-              <button
-                className="session-video-whatsapp-button"
-                onClick={sendVideoWhatsapp}
-                title="Enviar link da chamada de vídeo pelo WhatsApp"
-              >
-                <WhatsAppIcon className="w-4 h-4 text-emerald-600" /> Enviar link
-              </button>
+            {isCallStarted && (
+              <>
+                <button
+                  className={`session-video-link-button ${copiedVideoLink ? 'copied' : ''}`}
+                  onClick={copyVideoLink}
+                  title="Copiar link da chamada de vídeo para o paciente"
+                >
+                  {copiedVideoLink ? <><Check className="w-4 h-4 text-emerald-600" /> Link copiado!</> : <><Link2 className="w-4 h-4" /> Copiar link do vídeo</>}
+                </button>
+                {Boolean(patient?.telefone && patient.telefone.replace(/\D/g, '').length >= 10) && (
+                  <button
+                    className="session-video-whatsapp-button"
+                    onClick={sendVideoWhatsapp}
+                    title="Enviar link da chamada de vídeo pelo WhatsApp"
+                  >
+                    <WhatsAppIcon className="w-4 h-4 text-emerald-600" /> Enviar link
+                  </button>
+                )}
+              </>
             )}
           </div>
         )}
