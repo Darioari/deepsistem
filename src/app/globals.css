@@ -5024,3 +5024,32 @@ body.dark-theme .main-content:not(.patient-mode) {
   overscroll-behavior: contain;
   overflow-anchor: none;
 }
+.system-ai-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+}
+.system-ai-line {
+  display: block;
+  font-size: 0.74rem;
+  line-height: 1.52;
+  color: inherit;
+}
+.system-ai-line-break {
+  display: block;
+  height: 6px;
+}
+.system-ai-step-line {
+  padding-left: 2px;
+}
+.system-ai-code-pill {
+  display: inline-block;
+  background: color-mix(in srgb, var(--color-primary) 10%, var(--bg-card));
+  color: var(--color-primary);
+  padding: 1px 6px;
+  border-radius: 5px;
+  font-size: 0.7rem;
+  font-family: monospace;
+  font-weight: 600;
+}
