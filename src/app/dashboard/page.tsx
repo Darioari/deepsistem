@@ -2073,17 +2073,17 @@ const centralPacienteVazio = (): CentralPacienteData => ({
 
                             <div className="flex flex-col gap-4">
                               {formEntry.respostas.map((r, rIdx) => (
-                                <div key={r.id_pergunta || rIdx} className="p-4 rounded-lg bg-slate-50/70 dark:bg-slate-900/40 border border-slate-100 dark:border-slate-800/80 flex flex-col gap-2">
+                                <div key={r.id_pergunta || rIdx} className="p-3.5 rounded-lg bg-[#f8fafc] border border-slate-200 flex flex-col gap-2 shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
                                   <div className="flex items-center gap-2">
-                                    <span className="w-5 h-5 rounded-full bg-slate-200 dark:bg-slate-800 text-[10px] font-bold flex items-center justify-center text-slate-600 dark:text-slate-400">
+                                    <span className="w-5 h-5 rounded-full bg-[#09A4B3]/15 text-[#09A4B3] text-[10px] font-bold flex items-center justify-center">
                                       {String(rIdx + 1).padStart(2, '0')}
                                     </span>
-                                    <strong className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                                    <strong className="text-xs font-bold text-slate-700">
                                       {r.pergunta}
                                     </strong>
                                   </div>
-                                  <div className="pl-7 text-xs text-slate-800 dark:text-slate-200 whitespace-pre-wrap leading-relaxed font-normal">
-                                    {r.resposta || <span className="text-slate-400 italic">Não respondido</span>}
+                                  <div className="pl-7 text-xs text-slate-900 whitespace-pre-wrap leading-relaxed font-medium">
+                                    {r.resposta || <span className="text-slate-400 italic font-normal">Não respondido</span>}
                                   </div>
                                 </div>
                               ))}
