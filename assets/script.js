@@ -4,42 +4,129 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   // 0. Hero load animation + Scroll reveals
+  document.documentElement.classList.add('motion-ready');
   const heroSection = document.querySelector('.hero-section');
   if (heroSection) {
     requestAnimationFrame(() => heroSection.setAttribute('data-loaded', 'true'));
   }
 
-  const revealElements = document.querySelectorAll('.reveal');
+  const elementMotionSelectors = [
+    '.section-beta-video .section-header-center',
+    '.section-beta-video .video-mockup-wrapper',
+    '.section-beta-video .pillar-card',
+    '.section-professionals .professionals-copy > *',
+    '.section-professionals .professionals-visual',
+    '.section-gallery > .section-header-center',
+    '.section-gallery .gallery-side-nav',
+    '.section-gallery .gallery-tab-btn',
+    '.section-gallery .browser-showcase-container',
+    '.section-pricing .pricing-heading',
+    '.section-pricing .pricing-card',
+    '.section-flow .section-header-center',
+    '.section-flow .flow-card',
+    '.section-aura .aura-container > .aura-visual-box',
+    '.section-aura .aura-copy-content > *',
+    '.section-security .security-container > :first-child > *',
+    '.section-security .sec-card',
+    '.section-faq .section-header-center',
+    '.section-faq .faq-item',
+    '.section-final-cta .final-container > *'
+  ].join(', ');
+
+  document.querySelectorAll(elementMotionSelectors).forEach(element => {
+    element.classList.add('reveal-on-scroll');
+  });
+
+  const revealElements = document.querySelectorAll('.reveal-on-scroll');
   if (revealElements.length) {
-    const revealObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-          revealObserver.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.15 });
-    revealElements.forEach(el => revealObserver.observe(el));
+    if ('IntersectionObserver' in window) {
+      const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            revealObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.15 });
+      revealElements.forEach(el => revealObserver.observe(el));
+    } else {
+      revealElements.forEach(el => el.classList.add('visible'));
+    }
   }
 
   // 1. Gallery Tab Switching
+  const gallery = document.querySelector('.gallery-layout');
   const tabButtons = document.querySelectorAll('.gallery-tab-btn');
   const tabPanes = document.querySelectorAll('.gallery-content-pane');
+  let activeTabIndex = 0;
+  let galleryTimer;
 
-  tabButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const targetId = btn.getAttribute('data-tab');
-      
-      tabButtons.forEach(b => b.classList.remove('active'));
-      tabPanes.forEach(p => p.classList.remove('active'));
+  const activateGalleryTab = (index, shouldFocus = false) => {
+    if (!tabButtons.length) return;
 
-      btn.classList.add('active');
-      const targetPane = document.getElementById(`tab-${targetId}`);
-      if (targetPane) {
-        targetPane.classList.add('active');
+    activeTabIndex = (index + tabButtons.length) % tabButtons.length;
+    const activeButton = tabButtons[activeTabIndex];
+    const targetId = activeButton.getAttribute('data-tab');
+
+    tabButtons.forEach((button, buttonIndex) => {
+      const isActive = buttonIndex === activeTabIndex;
+      button.classList.toggle('active', isActive);
+      button.setAttribute('aria-selected', String(isActive));
+      if (isActive && shouldFocus) button.focus();
+    });
+
+    tabPanes.forEach(pane => {
+      pane.classList.toggle('active', pane.id === `tab-${targetId}`);
+    });
+  };
+
+  const stopGalleryAutoplay = () => {
+    window.clearInterval(galleryTimer);
+    if (gallery) gallery.classList.remove('is-autoplaying');
+  };
+
+  const startGalleryAutoplay = () => {
+    stopGalleryAutoplay();
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (gallery) gallery.classList.add('is-autoplaying');
+    galleryTimer = window.setInterval(() => activateGalleryTab(activeTabIndex + 1), 5200);
+  };
+
+  tabButtons.forEach((button, buttonIndex) => {
+    button.addEventListener('click', () => {
+      activateGalleryTab(buttonIndex);
+      startGalleryAutoplay();
+    });
+
+    button.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowRight') {
+        event.preventDefault();
+        activateGalleryTab(buttonIndex + 1, true);
+      }
+      if (event.key === 'ArrowUp' || event.key === 'ArrowLeft') {
+        event.preventDefault();
+        activateGalleryTab(buttonIndex - 1, true);
+      }
+      if (event.key === 'Home' || event.key === 'End') {
+        event.preventDefault();
+        activateGalleryTab(event.key === 'Home' ? 0 : tabButtons.length - 1, true);
       }
     });
   });
+
+  if (gallery && tabButtons.length > 1) {
+    gallery.addEventListener('mouseenter', stopGalleryAutoplay);
+    gallery.addEventListener('mouseleave', startGalleryAutoplay);
+    gallery.addEventListener('focusin', stopGalleryAutoplay);
+    gallery.addEventListener('focusout', event => {
+      if (!gallery.contains(event.relatedTarget)) startGalleryAutoplay();
+    });
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) stopGalleryAutoplay();
+      else startGalleryAutoplay();
+    });
+    startGalleryAutoplay();
+  }
 
   // 2. Lightbox for Screenshots
   const lightbox = document.getElementById('lightbox-modal');
@@ -91,13 +178,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const navLinks = document.getElementById('nav-links');
   if (mobileBtn && navLinks) {
     mobileBtn.addEventListener('click', () => {
-      navLinks.classList.toggle('mobile-open');
+      const isOpen = navLinks.classList.toggle('mobile-open');
+      mobileBtn.setAttribute('aria-expanded', String(isOpen));
+      mobileBtn.setAttribute('aria-label', isOpen ? 'Fechar menu' : 'Abrir menu');
     });
     
     // Close on link click
     navLinks.querySelectorAll('a').forEach(link => {
       link.addEventListener('click', () => {
         navLinks.classList.remove('mobile-open');
+        mobileBtn.setAttribute('aria-expanded', 'false');
+        mobileBtn.setAttribute('aria-label', 'Abrir menu');
       });
     });
   }

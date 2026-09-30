@@ -1,0 +1,270 @@
+/* DeePsistem landing palette inspired by the supplied reference. */
+:root {
+  --bg-dark: #0b2031;
+  --bg-dark-surface: #102a3b;
+  --bg-dark-card: rgba(16, 42, 59, 0.78);
+  --bg-light: #f4f7f9;
+  --bg-light-surface: #ffffff;
+  --bg-light-sand: #e9f0f3;
+
+  --color-primary: #27b7c5;
+  --color-primary-light: #65d2dc;
+  --color-primary-dark: #128899;
+  --color-accent: #117d8b;
+  --color-accent-light: #37b6c2;
+  --color-accent-soft: #e2f3f5;
+
+  --text-dark: #112b40;
+  --text-dark-muted: #64788a;
+  --text-light: #f8fbfd;
+  --text-light-muted: rgba(239, 247, 250, 0.72);
+
+  --line-dark: rgba(235, 247, 251, 0.11);
+  --line-light: #dce5ec;
+
+  --shadow-sm: 0 4px 12px rgba(11, 32, 49, 0.06);
+  --shadow-md: 0 12px 30px rgba(11, 32, 49, 0.1);
+  --shadow-lg: 0 24px 60px rgba(11, 32, 49, 0.18);
+  --shadow-glow: 0 0 50px rgba(39, 183, 197, 0.27);
+  --shadow-accent-glow: 0 0 36px rgba(255, 117, 93, 0.22);
+}
+
+html {
+  color: var(--text-dark);
+  background: var(--bg-light);
+}
+
+body {
+  background: var(--bg-light);
+  color: var(--text-dark);
+}
+
+.site-header {
+  background: rgba(11, 32, 49, 0.94) !important;
+  border-bottom-color: rgba(101, 210, 220, 0.18) !important;
+  box-shadow: 0 10px 28px rgba(5, 19, 30, 0.24) !important;
+}
+
+.site-header .brand-img {
+  filter: none !important;
+}
+
+.site-header .nav-links a,
+.site-header .nav-action-login {
+  color: #f4f9fb !important;
+}
+
+.site-header .nav-links a:hover,
+.site-header .nav-links a:focus-visible {
+  color: var(--color-primary-light) !important;
+}
+
+.site-header .nav-action-login {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border-color: rgba(235, 247, 251, 0.2) !important;
+}
+
+.site-header .nav-action-login:hover {
+  background: rgba(39, 183, 197, 0.16) !important;
+  border-color: rgba(101, 210, 220, 0.52) !important;
+}
+
+.mobile-menu-btn {
+  color: #f7fbfd !important;
+  background: rgba(39, 183, 197, 0.18) !important;
+  border-color: rgba(101, 210, 220, 0.42) !important;
+}
+
+.nav-links.mobile-open {
+  background: rgba(11, 32, 49, 0.96) !important;
+  border-color: rgba(101, 210, 220, 0.2) !important;
+}
+
+.nav-links.mobile-open li a:hover {
+  background: rgba(39, 183, 197, 0.18) !important;
+}
+
+.hero-section {
+  isolation: isolate;
+  color: #f8fbfd !important;
+  background:
+    radial-gradient(circle at 77% 34%, rgba(39, 183, 197, 0.2), transparent 43%),
+    radial-gradient(circle at 12% 92%, rgba(255, 117, 93, 0.12), transparent 37%),
+    linear-gradient(118deg, #0b3040 0%, #0b2334 54%, #081b29 100%) !important;
+}
+
+.hero-section .grid-lines {
+  opacity: 0.68;
+  background-image:
+    linear-gradient(rgba(225, 243, 248, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(225, 243, 248, 0.055) 1px, transparent 1px) !important;
+}
+
+.hero-section .hero-content h1,
+.hero-section .hero-content h1 span:not(.gradient-text) {
+  color: #f8fbfd !important;
+}
+
+.hero-section .hero-content h1 span.gradient-text {
+  background: linear-gradient(90deg, #ffffff 4%, #36c4cf 76%, #78dce4 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+}
+
+.hero-section .hero-content p.lead {
+  color: rgba(239, 247, 250, 0.78) !important;
+}
+
+.hero-section .hero-trust-bar span {
+  color: rgba(239, 247, 250, 0.78) !important;
+}
+
+.hero-section .hero-trust-bar svg,
+.hero-section .badge-dark svg {
+  color: var(--color-primary-light) !important;
+  stroke: currentColor;
+}
+
+.hero-section .badge-dark {
+  color: var(--color-primary-light) !important;
+  background: rgba(39, 183, 197, 0.11) !important;
+  border: 1px solid rgba(101, 210, 220, 0.25);
+}
+
+.hero-glow-1 {
+  background: radial-gradient(circle, rgba(39, 183, 197, 0.25), transparent 70%) !important;
+}
+
+.hero-glow-2 {
+  background: radial-gradient(circle, rgba(255, 117, 93, 0.14), transparent 72%) !important;
+}
+
+.section-beta-video,
+.section-flow {
+  color: var(--text-dark) !important;
+  background: #eaf3f6 !important;
+}
+
+.section-beta-video .section-header-center h2 em {
+  color: var(--color-primary-dark) !important;
+}
+
+.section-beta-video .section-header-center p,
+.section-flow .section-header-center p {
+  color: var(--text-dark-muted) !important;
+}
+
+.section-beta-video .pillar-card,
+.section-beta-video .pillar-card:nth-child(even) {
+  background: #f7fbfc !important;
+  border-color: #c8e0e7 !important;
+}
+
+.section-beta-video .pillar-card:hover,
+.section-beta-video .pillar-card:nth-child(even):hover {
+  background: #e0f2f5 !important;
+  border-color: var(--color-primary) !important;
+}
+
+.section-beta-video .pillar-card h3 {
+  color: var(--text-dark) !important;
+}
+
+.section-beta-video .pillar-card p {
+  color: var(--text-dark-muted) !important;
+}
+
+.section-beta-video .pillar-icon,
+.section-beta-video .pillar-card:nth-child(3) .pillar-icon {
+  background: #27b7c5 !important;
+  border-color: #27b7c5 !important;
+  color: #102a3b !important;
+  box-shadow: 0 8px 20px rgba(39, 183, 197, 0.24);
+}
+
+.section-beta-video .pillar-card:nth-child(2) .pillar-icon,
+.section-beta-video .pillar-card:nth-child(4) .pillar-icon {
+  background: #ff755d !important;
+  border-color: #ff755d !important;
+  color: #102a3b !important;
+  box-shadow: 0 8px 20px rgba(255, 117, 93, 0.24);
+}
+
+.section-aura {
+  background: #f4f7f9 !important;
+}
+
+.section-security {
+  background: #edf3f6 !important;
+}
+
+.section-final-cta {
+  isolation: isolate;
+  color: #f8fbfd !important;
+  background:
+    radial-gradient(circle at 77% 34%, rgba(39, 183, 197, 0.2), transparent 43%),
+    radial-gradient(circle at 12% 92%, rgba(255, 117, 93, 0.12), transparent 37%),
+    linear-gradient(118deg, #0b3040 0%, #0b2334 54%, #081b29 100%) !important;
+}
+
+.btn-primary,
+.btn-primary:focus-visible,
+.pricing-card-featured .pricing-button,
+.pricing-card-featured .pricing-button:hover,
+.pricing-card-featured .pricing-button:focus-visible {
+  color: #102a3b !important;
+  background: linear-gradient(120deg, #ff8268 0%, #ff6f56 100%) !important;
+  border-color: #ff8268 !important;
+  box-shadow: 0 12px 30px rgba(255, 117, 93, 0.24) !important;
+}
+
+.btn-primary:hover,
+.pricing-card-featured .pricing-button:hover {
+  background: linear-gradient(120deg, #ff987f 0%, #ff7d64 100%) !important;
+  border-color: #ff987f !important;
+  box-shadow: 0 16px 34px rgba(255, 117, 93, 0.3) !important;
+}
+
+.btn-ghost-dark {
+  border-color: rgba(101, 210, 220, 0.42) !important;
+  color: #edf8fa !important;
+}
+
+.pricing-grid-single {
+  grid-template-columns: minmax(0, 720px) !important;
+  justify-content: center;
+}
+
+.pricing-grid-single .pricing-card {
+  min-height: auto;
+  transform: none;
+}
+
+.btn-ghost-dark:hover {
+  background: rgba(39, 183, 197, 0.14) !important;
+  border-color: var(--color-primary-light) !important;
+}
+
+.site-footer {
+  color: rgba(239, 247, 250, 0.72) !important;
+  background: #0b2031 !important;
+  border-top-color: rgba(101, 210, 220, 0.18) !important;
+}
+
+.site-footer a:hover {
+  color: var(--color-primary-light) !important;
+}
+
+::selection {
+  color: #102a3b;
+  background: rgba(101, 210, 220, 0.55);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-glow-1,
+  .hero-glow-2 {
+    animation: none !important;
+  }
+}
