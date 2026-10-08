@@ -156,60 +156,6 @@ body {
   color: var(--text-dark-muted) !important;
 }
 
-/* Keep the clinical flow readable on its light palette background. */
-.section-flow .section-header-center h2 {
-  color: var(--text-dark) !important;
-}
-
-.section-flow .section-header-center .badge-pill {
-  color: var(--color-accent) !important;
-  background: var(--color-accent-soft) !important;
-  border-color: #c8e0e7 !important;
-}
-
-.section-flow .flow-grid {
-  gap: 16px;
-  border: 0;
-  border-radius: 0;
-  overflow: visible;
-  background: transparent;
-}
-
-.section-flow .flow-card {
-  padding: 30px 20px;
-  border: 1px solid #c8e0e7 !important;
-  border-radius: 18px;
-  background: #f7fbfc !important;
-  box-shadow: 0 10px 24px rgba(16, 42, 59, 0.06);
-}
-
-.section-flow .flow-card:hover {
-  border-color: #27b7c5 !important;
-  background: #e0f2f5 !important;
-  box-shadow: 0 16px 32px rgba(16, 42, 59, 0.11);
-}
-
-.section-flow .flow-number {
-  color: var(--color-primary-dark) !important;
-}
-
-.section-flow .flow-card:nth-child(even) .flow-number,
-.section-flow .flow-card:nth-child(even) .flow-icon {
-  color: #ff755d !important;
-}
-
-.section-flow .flow-icon {
-  color: var(--color-primary-dark) !important;
-}
-
-.section-flow .flow-card h3 {
-  color: var(--bg-dark-surface) !important;
-}
-
-.section-flow .flow-card p {
-  color: var(--text-dark-muted) !important;
-}
-
 .section-beta-video .pillar-card,
 .section-beta-video .pillar-card:nth-child(even) {
   background: #f7fbfc !important;
@@ -234,7 +180,7 @@ body {
 .section-beta-video .pillar-card:nth-child(3) .pillar-icon {
   background: #27b7c5 !important;
   border-color: #27b7c5 !important;
-  color: var(--bg-dark-surface) !important;
+  color: #102a3b !important;
   box-shadow: 0 8px 20px rgba(39, 183, 197, 0.24);
 }
 
@@ -252,25 +198,6 @@ body {
 
 .section-security {
   background: #edf3f6 !important;
-}
-
-.section-security .sec-card svg {
-  box-sizing: content-box;
-  width: 24px;
-  height: 24px;
-  padding: 10px;
-  margin-bottom: 18px;
-  color: var(--bg-dark-surface) !important;
-  background: var(--color-primary);
-  border: 1px solid var(--color-primary);
-  border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(39, 183, 197, 0.24);
-}
-
-.section-security .sec-card:nth-child(even) svg {
-  background: #ff755d;
-  border-color: #ff755d;
-  box-shadow: 0 8px 20px rgba(255, 117, 93, 0.24);
 }
 
 .section-final-cta {
@@ -341,4 +268,3 @@ body {
     animation: none !important;
   }
 }
-
