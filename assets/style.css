@@ -4036,3 +4036,13 @@ p {
     padding: 28px 18px;
   }
 }
+
+
+/* Mobile: align the fixed header to the visible viewport on narrow screens. */
+@media (max-width: 540px) {
+  .site-header {
+    width: 100%;
+    width: 100dvw;
+    right: auto;
+  }
+}
